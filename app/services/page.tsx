@@ -162,7 +162,7 @@ export default function ServicesPage() {
           <div className="services-card-box">
             <div className="services-card-image-wrapper">
               <Image
-                src="/assets/problem solving.png"
+                src="/assets/Problem Solving.png"
                 alt="NESCAFE Europe Cold"
                 width={1200}
                 height={800}
