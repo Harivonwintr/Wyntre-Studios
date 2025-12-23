@@ -67,10 +67,10 @@ export default function CaseStudyModal({
       setIsPlaying(false);
       return;
     }
-    const newIndex = clampIndex(initialIndex, items.length);
+    const newIndex = clampIndex(initialIndex, items?.length || 0);
     setIndex(newIndex);
     setIsPlaying(false);
-  }, [isOpen, initialIndex, items.length]);
+  }, [isOpen, initialIndex, items]);
 
   // Reset playback when index changes
   useEffect(() => {
