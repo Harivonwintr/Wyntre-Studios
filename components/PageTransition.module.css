@@ -1,0 +1,90 @@
+.pageWrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.pageLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100vh;
+  will-change: transform;
+}
+
+/* Default state - no animation */
+.pageLayer:not(.pageExit):not(.pageExitRight):not(.slideIn):not(.slideInFromLeft) {
+  position: relative;
+  animation: none;
+}
+
+/* Exiting page - slide out to left (forward navigation) */
+.pageExit {
+  animation: slideOutToLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 1;
+}
+
+/* Exiting case study page - slide out to right (back navigation) */
+.pageExitRight {
+  animation: slideOutToRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 1;
+}
+
+/* Entering case study page - slide in from right (forward navigation) */
+.slideIn {
+  z-index: 2;
+  animation: slideInFromRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Entering work page - slide in from left (back navigation) */
+.slideInFromLeft {
+  z-index: 2;
+  animation: slideInFromLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
