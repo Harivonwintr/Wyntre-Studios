@@ -24,7 +24,7 @@ export function useScrollAnimations() {
       const campaignElements = [
         campaignSection.querySelector('.campaign-heading'),
         campaignSection.querySelector('.campaign-description'),
-        ...campaignSection.querySelectorAll('.campaign-card'),
+        ...Array.from(campaignSection.querySelectorAll('.campaign-card')),
         campaignSection.querySelector('.btn-container')
       ].filter(el => el !== null)
       campaignElements.forEach(el => observer.observe(el))
@@ -48,7 +48,7 @@ export function useScrollAnimations() {
       const caseElements = [
         caseStudiesSection.querySelector('.cs-intro'),
         caseStudiesSection.querySelector('.cs-subheading'),
-        ...caseStudiesSection.querySelectorAll('.cs-card')
+        ...Array.from(caseStudiesSection.querySelectorAll('.cs-card'))
       ].filter(el => el !== null)
       caseElements.forEach(el => observer.observe(el))
     }
@@ -195,7 +195,7 @@ export function useScrollAnimations() {
     if (rescueStoriesSection) {
       const rescueElements = [
         rescueStoriesSection.querySelector('.rescue-stories-header'),
-        ...rescueStoriesSection.querySelectorAll('.rescue-story-card')
+        ...Array.from(rescueStoriesSection.querySelectorAll('.rescue-story-card'))
       ].filter(el => el !== null)
       rescueElements.forEach((el, index) => {
         // Add staggered delay for cards
@@ -211,7 +211,7 @@ export function useScrollAnimations() {
     if (beyondReelSection) {
       const beyondReelElements = [
         beyondReelSection.querySelector('.work-beyond-reel-heading'),
-        ...beyondReelSection.querySelectorAll('.work-beyond-reel-text')
+        ...Array.from(beyondReelSection.querySelectorAll('.work-beyond-reel-text'))
       ].filter(el => el !== null)
       beyondReelElements.forEach((el, index) => {
         observer.observe(el)
