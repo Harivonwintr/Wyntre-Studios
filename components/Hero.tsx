@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import OutlineButton from '@/components/OutlineButton'
 import ScrollIndicator from '@/components/ScrollIndicator'
 
@@ -26,8 +25,8 @@ export default function Hero() {
           <OutlineButton href="#reel" variant="white">
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
               WATCH NOW
-              <Image 
-                src="/assets/play_circle.svg" 
+              <img 
+                src="/assets/Play_Circle.svg" 
                 alt="Play" 
                 width={24} 
                 height={24}
