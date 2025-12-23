@@ -21,10 +21,11 @@ export function useScrollAnimations() {
     // Campaign Range section
     const campaignSection = document.getElementById('campaign-range')
     if (campaignSection) {
+      const campaignCards = Array.from(campaignSection.querySelectorAll('.campaign-card'))
       const campaignElements = [
         campaignSection.querySelector('.campaign-heading'),
         campaignSection.querySelector('.campaign-description'),
-        ...Array.from(campaignSection.querySelectorAll('.campaign-card')),
+        ...campaignCards,
         campaignSection.querySelector('.btn-container')
       ].filter(el => el !== null)
       campaignElements.forEach(el => observer.observe(el))
@@ -45,10 +46,11 @@ export function useScrollAnimations() {
     // Case Studies section
     const caseStudiesSection = document.getElementById('case-studies')
     if (caseStudiesSection) {
+      const caseCards = Array.from(caseStudiesSection.querySelectorAll('.cs-card'))
       const caseElements = [
         caseStudiesSection.querySelector('.cs-intro'),
         caseStudiesSection.querySelector('.cs-subheading'),
-        ...Array.from(caseStudiesSection.querySelectorAll('.cs-card'))
+        ...caseCards
       ].filter(el => el !== null)
       caseElements.forEach(el => observer.observe(el))
     }
@@ -193,9 +195,10 @@ export function useScrollAnimations() {
     // Rescue Stories section
     const rescueStoriesSection = document.querySelector('.rescue-stories')
     if (rescueStoriesSection) {
+      const rescueCards = Array.from(rescueStoriesSection.querySelectorAll('.rescue-story-card'))
       const rescueElements = [
         rescueStoriesSection.querySelector('.rescue-stories-header'),
-        ...Array.from(rescueStoriesSection.querySelectorAll('.rescue-story-card'))
+        ...rescueCards
       ].filter(el => el !== null)
       rescueElements.forEach((el, index) => {
         // Add staggered delay for cards
@@ -209,9 +212,10 @@ export function useScrollAnimations() {
     // Work page - Beyond the reel section
     const beyondReelSection = document.querySelector('.work-beyond-reel')
     if (beyondReelSection) {
+      const beyondReelTexts = Array.from(beyondReelSection.querySelectorAll('.work-beyond-reel-text'))
       const beyondReelElements = [
         beyondReelSection.querySelector('.work-beyond-reel-heading'),
-        ...Array.from(beyondReelSection.querySelectorAll('.work-beyond-reel-text'))
+        ...beyondReelTexts
       ].filter(el => el !== null)
       beyondReelElements.forEach((el, index) => {
         observer.observe(el)
