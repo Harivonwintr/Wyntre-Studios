@@ -5,9 +5,59 @@
   box-sizing: border-box;
 }
 
-:root{
-  --page-bg: #ECF0F1;   /* your site background */
-  --ink-900: #0D1117;   /* the dark you want */
+:root {
+  /* Colors */
+  --page-bg: #ECF0F1;
+  --ink-900: #0D1117;
+  --ink-dark: #0a0b0d;
+  --accent-yellow: #f4c94a;
+  --accent-yellow-alt: #FEC20E;
+  --accent-blue: #0066ff;
+  --white: #fff;
+  
+  /* Text Colors */
+  --text-primary: #0a0b0d;
+  --text-secondary: rgba(10, 11, 13, 0.75);
+  --text-light: rgba(255, 255, 255, 0.85);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --text-muted-light: rgba(255, 255, 255, 0.75);
+  
+  /* Background Colors */
+  --bg-dark: #0D1117;
+  --bg-light: #ECF0F1;
+  --bg-overlay: rgba(10, 11, 13, 0.95);
+  --bg-overlay-light: rgba(255, 255, 255, 0.05);
+  
+  /* Fonts */
+  --font-heading: 'Monument Extended Regular', 'Inter', Arial, sans-serif;
+  --font-body: 'Inter', Arial, sans-serif;
+  
+  /* Spacing */
+  --container-width: 1200px;
+  --container: 1200px;
+  --section-padding: 120px;
+  --nav-height: 80px;
+  --gap: 24px;
+  --cr-gap-x: 18px;
+  --cr-gap-y: 18px;
+  --cr-offset: 30px;
+  
+  /* Border Radius */
+  --radius: 20px;
+  --cr-radius: 15px;
+  --card-pad: 16px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.8s ease-out;
+  
+  /* Footer */
+  --footer-bg: #0D1117;
+  --ink-600: rgba(255,255,255,.72);
+  --ink-400: rgba(255,255,255,.55);
+  --ink-200: rgba(255,255,255,.35);
+  --accent: #FEC20E;
 }
 
 .section-dark {
@@ -17,7 +67,7 @@
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Monument Extended Regular', 'Inter', Arial, sans-serif;
+  font-family: var(--font-heading);
   font-weight: 200;
   letter-spacing: 0.04em;
 }
@@ -36,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .site-header.menu-open {
-  background: rgba(10, 11, 13, 0.95);
+  background: var(--bg-overlay);
 }
 
 @media (max-width: 768px) {
@@ -88,17 +138,17 @@ h1, h2, h3, h4, h5, h6 {
 .nav-pill {
   position: absolute;
   height: 24px;
-  background-color: #f4c94a;
+  background-color: var(--accent-yellow);
   border-radius: 12px;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.2s ease;
+  transition: width var(--transition-medium), 
+              left var(--transition-medium),
+              opacity var(--transition-fast);
   pointer-events: none;
   z-index: 0;
 }
 
 .nav-links a{
-  font-family: 'Monument Extended Regular', 'Inter', Arial, sans-serif;
+  font-family: var(--font-heading);
   color: rgba(255,255,255,.9);
   text-decoration:none;
   font-size: 12px;
@@ -195,7 +245,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dropdown-menu a {
-  font-family: 'Monument Extended Regular', 'Inter', Arial, sans-serif;
+  font-family: var(--font-heading);
   display: block;
   padding: 12px 20px;
   color: #fff;
@@ -222,11 +272,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Optional: make the whole bar taller */
-:root{ --nav-h: 80px; }        /* tweak to 88/96px if you want */
-.nav-inner{ min-height: var(--nav-h); }
+.nav-inner{ min-height: var(--nav-height); }
 
 /* If your body sections need space when header becomes sticky later */
-.has-sticky-header{ padding-top: var(--nav-h); }
+.has-sticky-header{ padding-top: var(--nav-height); }
 
 
 
@@ -240,9 +289,9 @@ html {
 }
 
 body {
-  background: #0D1117;   /* dark background */
-  color: #ECF0F1;        /* default text */
-  font-family: 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--page-bg);
+  font-family: var(--font-body);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -261,13 +310,13 @@ main {
 
 /* Accent (yellow highlight for words like PERFECTED, OURS) */
 .accent {
-  color: #f4c94a;
+  color: var(--accent-yellow);
 }
 
 /* Kicker text (small uppercase section headers) */
 .kicker {
   letter-spacing: .2em;
-  color: rgba(255,255,255,.6);
+  color: var(--text-muted);
 }
 
 /* Buttons */
@@ -341,7 +390,7 @@ background: linear-gradient(
 }
 .hero-title .accent { color: #FEC20E; }
 
-.header-fixed-spacer { height: var(--nav-h, 64px); }
+.header-fixed-spacer { height: var(--nav-height); }
 
 .hero-mark {
   position: absolute;
@@ -377,8 +426,8 @@ background: linear-gradient(
 
 /* Band + stage */
 .spine-band{ 
-  background:#0D1117; 
-  color:#ECF0F1; 
+  background: var(--bg-dark); 
+  color: var(--page-bg); 
   margin:0; 
   padding:0; 
   min-height:50vh;
@@ -437,7 +486,7 @@ background: linear-gradient(
 
 /* Words */
 .sp-line .w{ display:inline-block; will-change:transform,opacity,letter-spacing; }
-.sp-line .ours{ letter-spacing:0; color:#f4c94a; }
+.sp-line .ours{ letter-spacing:0; color: var(--accent-yellow); }
 
 /* Dock (bar style with separators) */
 .sp-services {
@@ -499,12 +548,6 @@ background: linear-gradient(
    Campaign Range (scoped)
    ========================= */
 
-:root{
-  --cr-gap-x: 18px;
-  --cr-gap-y: 18px;
-  --cr-radius: 15px;
-  --cr-offset: 30px;
-}
 
 #campaign-range{
   padding: 60px 0 40px 0;
@@ -709,12 +752,6 @@ background: linear-gradient(
 /* Aspect helpers */
 .ratio-2-3  { aspect-ratio: 2 / 3; }
 
-:root{
-  --container: 1200px;
-  --gap: 24px;
-  --radius: 20px;       /* matches your Figma */
-  --card-pad: 16px;
-}
 
 /* container helper */
 .container{max-width:var(--container);margin-inline:auto;padding-inline:24px}
@@ -1183,14 +1220,6 @@ a.cs-card:hover .card-title {
 }
 /* ---- Footer ---- */
 
-:root{
-  --footer-bg: #0D1117;
-  --ink-600: rgba(255,255,255,.72);
-  --ink-400: rgba(255,255,255,.55);
-  --ink-200: rgba(255,255,255,.35);
-  --accent: #FEC20E;
-  --container: 1200px;
-}
 
 /* Shell */
 .footer{
