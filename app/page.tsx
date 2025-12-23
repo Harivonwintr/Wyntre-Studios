@@ -10,6 +10,7 @@ import { workItems } from '@/data/workItems'
 import { caseStudyItems } from '@/data/caseStudyItems'
 import { useScrollAnimations } from '@/hooks/useScrollAnimations'
 import { useTiltCard } from '@/hooks/useTiltCard'
+import { findCampaignRangeIndex, getCampaignRangeModalItems } from '@/utils/campaignUtils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { WorkItem } from '@/data/workItems'
@@ -20,21 +21,6 @@ export default function Home() {
 
   useScrollAnimations()
   useTiltCard()
-
-  // Filter out case study items from the modal (only show campaign range items)
-  const campaignRangeModalItems = caseStudyItems.filter(
-    (item) => 
-      !(item.client === 'NIVEA' && item.campaign === 'Global Campaign Infrastructure') &&
-      !(item.client === 'Nestlé' && item.campaign === 'Product Textures & Visualisation')
-  )
-
-  // Find campaign range item by matching posterUrl
-  const findCampaignRangeIndex = (posterUrl: string): number => {
-    const index = campaignRangeModalItems.findIndex(
-      (item) => item.posterUrl === posterUrl
-    )
-    return index >= 0 ? index : 0
-  }
 
   const handleCampaignRangeClick = (item: WorkItem) => {
     const index = findCampaignRangeIndex(item.posterUrl)
@@ -232,7 +218,7 @@ export default function Home() {
       <CaseStudyModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        items={campaignRangeModalItems}
+        items={getCampaignRangeModalItems()}
         initialIndex={selectedIndex}
       />
     </>

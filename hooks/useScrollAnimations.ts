@@ -61,7 +61,7 @@ export function useScrollAnimations() {
       const clientsHeading = clientsSection.querySelector('.clients-heading')
       if (clientsHeading) observer.observe(clientsHeading)
       
-      const clientLogos = clientsSection.querySelectorAll('.client-logo')
+      const clientLogos = Array.from(clientsSection.querySelectorAll('.client-logo'))
       clientLogos.forEach(logo => observer.observe(logo))
     }
 
@@ -93,8 +93,8 @@ export function useScrollAnimations() {
     // Spine section on studio page
     const studioSpineSection = document.getElementById('spine-seq')
     if (studioSpineSection) {
-      const studioSpineLines = studioSpineSection.querySelectorAll('.studio-hero-line')
-      studioSpineLines.forEach((line, index) => {
+      const studioSpineLines = Array.from(studioSpineSection.querySelectorAll('.studio-hero-line'))
+      studioSpineLines.forEach((line) => {
         observer.observe(line)
       })
     }
@@ -154,9 +154,9 @@ export function useScrollAnimations() {
     // Spine section on services page
     const servicesSpineSection = document.getElementById('spine-seq')
     if (servicesSpineSection) {
-      const servicesSpineLines = servicesSpineSection.querySelectorAll('.services-spine-line')
+      const servicesSpineLines = Array.from(servicesSpineSection.querySelectorAll('.services-spine-line'))
       const servicesSpineSubtitle = servicesSpineSection.querySelector('.services-spine-subtitle')
-      servicesSpineLines.forEach((line, index) => {
+      servicesSpineLines.forEach((line) => {
         observer.observe(line)
       })
       if (servicesSpineSubtitle) observer.observe(servicesSpineSubtitle)
@@ -165,8 +165,8 @@ export function useScrollAnimations() {
     // Services section (Video Post Production, VFX & CGI, etc.)
     const servicesSection = document.querySelector('.services-section')
     if (servicesSection) {
-      const serviceTitles = servicesSection.querySelectorAll('.services-title-standalone')
-      const serviceCards = servicesSection.querySelectorAll('.services-card-box')
+      const serviceTitles = Array.from(servicesSection.querySelectorAll('.services-title-standalone'))
+      const serviceCards = Array.from(servicesSection.querySelectorAll('.services-card-box'))
       serviceTitles.forEach(title => observer.observe(title))
       serviceCards.forEach(card => observer.observe(card))
     }

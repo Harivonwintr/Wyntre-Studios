@@ -18,15 +18,14 @@ export default function ContactForm() {
     e.preventDefault()
     
     if (!formRef.current) {
-      console.error('Form ref is null')
       return
     }
 
     const formData = new FormData(formRef.current)
-    const name = formData.get('name') as string
-    const email = formData.get('email') as string
-    const message = formData.get('message') as string
-    const gotcha = formData.get('_gotcha') as string
+    const name = formData.get('name')?.toString() || ''
+    const email = formData.get('email')?.toString() || ''
+    const message = formData.get('message')?.toString() || ''
+    const gotcha = formData.get('_gotcha')?.toString() || ''
 
     // Honeypot check - if filled, silently succeed
     if (gotcha) {
@@ -105,7 +104,6 @@ export default function ContactForm() {
         }
       }
     } catch (error) {
-      console.error('Form submission error:', error)
       setStatus('error')
       setErrorMessage('Something went wrong. Try again.')
     }
