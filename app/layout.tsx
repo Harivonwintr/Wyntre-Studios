@@ -27,9 +27,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
-        {/* Preload primary heading font */}
+        {/* Load Monument Extended Regular first - critical for headings and nav */}
         <link
           rel="preload"
           href="https://db.onlinewebfonts.com/c/99501fdab737541e9315ceaf9229370f?family=Monument+Extended+Regular"
@@ -48,24 +48,8 @@ export default function RootLayout({
           href="https://db.onlinewebfonts.com/c/3147420f5573b22000d1e233cae7cdc9?family=PP+Hatton"
           rel="stylesheet"
         />
-        <style dangerouslySetInnerHTML={{
-          __html: `
-            @font-face {
-              font-family: 'Monument Extended Regular';
-              font-display: swap;
-            }
-            @font-face {
-              font-family: 'Monument Extended Bold';
-              font-display: swap;
-            }
-            @font-face {
-              font-family: 'PP Hatton';
-              font-display: swap;
-            }
-          `
-        }} />
       </head>
-      <body className={inter.variable}>
+      <body>
         <Nav />
         <ConditionalHero />
         <PageTransition>
