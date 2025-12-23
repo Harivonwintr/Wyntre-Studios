@@ -29,8 +29,8 @@
   --bg-overlay-light: rgba(255, 255, 255, 0.05);
   
   /* Fonts */
-  --font-heading: 'Monument Extended Regular', 'Inter', Arial, sans-serif;
-  --font-body: 'Inter', Arial, sans-serif;
+  --font-heading: 'Monument Extended Regular', var(--font-inter), 'Inter', Arial, sans-serif;
+  --font-body: var(--font-inter), 'Inter', Arial, sans-serif;
   
   /* Spacing */
   --container-width: 1200px;
