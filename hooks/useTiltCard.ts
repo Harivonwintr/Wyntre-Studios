@@ -35,12 +35,13 @@ export function useTiltCard() {
         if (grid) grid.classList.add('hovering')
       }
 
-      const onMove = (e: MouseEvent) => {
+      const onMove = (e: Event) => {
+        const mouseEvent = e as MouseEvent
         if (!rect) rect = card.getBoundingClientRect()
         const cx = rect.left + rect.width / 2
         const cy = rect.top + rect.height / 2
-        const px = (e.clientX - cx) / (rect.width / 2)
-        const py = (e.clientY - cy) / (rect.height / 2)
+        const px = (mouseEvent.clientX - cx) / (rect.width / 2)
+        const py = (mouseEvent.clientY - cy) / (rect.height / 2)
         const ry = px * maxTilt
         const rx = -py * maxTilt
 
@@ -59,7 +60,7 @@ export function useTiltCard() {
       }
 
       card.addEventListener('mouseenter', onEnter)
-      card.addEventListener('mousemove', onMove)
+      card.addEventListener('mousemove', onMove as EventListener)
       card.addEventListener('mouseleave', onLeave)
 
       return () => {
