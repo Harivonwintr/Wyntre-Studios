@@ -45,12 +45,15 @@ export default function CaseStudyModal({
   items,
   initialIndex = 0,
 }: Props) {
-  const [index, setIndex] = useState(() => clampIndex(initialIndex, items.length));
+  const [index, setIndex] = useState(() => clampIndex(initialIndex, items?.length || 0));
   const [isPlaying, setIsPlaying] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const backdropRef = React.useRef<HTMLDivElement>(null);
 
-  const item = useMemo(() => items[clampIndex(index, items.length)], [items, index]);
+  const item = useMemo(() => {
+    if (!items || items.length === 0) return null;
+    return items[clampIndex(index, items.length)];
+  }, [items, index]);
 
   const handleClose = useCallback(() => {
     if (isClosing) return;
@@ -100,7 +103,10 @@ export default function CaseStudyModal({
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const dialog = document.querySelector(`[role="dialog"]`) as HTMLElement | null;
     const closeBtn = dialog?.querySelector('footer button') as HTMLElement | null;
-    closeBtn?.focus();
+    // Focus close button after a brief delay to ensure dialog is rendered
+    requestAnimationFrame(() => {
+      closeBtn?.focus();
+    });
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -115,7 +121,7 @@ export default function CaseStudyModal({
         e.preventDefault();
         if (isClosing) return;
         setIsPlaying(false);
-        setIndex((v) => clampIndex(v - 1, items.length));
+        setIndex((v) => clampIndex(v - 1, items?.length || 0));
         return;
       }
 
@@ -123,7 +129,7 @@ export default function CaseStudyModal({
         e.preventDefault();
         if (isClosing) return;
         setIsPlaying(false);
-        setIndex((v) => clampIndex(v + 1, items.length));
+        setIndex((v) => clampIndex(v + 1, items?.length || 0));
         return;
       }
 
@@ -156,7 +162,7 @@ export default function CaseStudyModal({
       window.removeEventListener("keydown", onKeyDown);
       previouslyFocused?.focus?.();
     };
-  }, [isOpen, handleClose, items.length, isClosing]);
+  }, [isOpen, handleClose, isClosing]);
 
   const handleAnimationEnd = (e: React.AnimationEvent<HTMLDivElement>) => {
     if (!isClosing) return;
@@ -166,7 +172,7 @@ export default function CaseStudyModal({
   };
 
   // Keep component mounted during closing animation
-  if ((!isOpen && !isClosing) || !item) return null;
+  if ((!isOpen && !isClosing) || !item || !items || items.length === 0) return null;
 
   const goPrev = () => {
     if (isClosing) return;

@@ -81,7 +81,7 @@ export default function OutlineButton({
   if (href) {
     return (
       <Link 
-        ref={linkRef as any} 
+        ref={linkRef as React.Ref<HTMLAnchorElement>} 
         href={href} 
         {...commonProps}
       >

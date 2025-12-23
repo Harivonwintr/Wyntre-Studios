@@ -71,11 +71,13 @@ export default function Nav() {
   // Handle scroll on page load if navigating from another page
   useEffect(() => {
     // Check if we should scroll based on sessionStorage flag
-    const shouldScroll = sessionStorage.getItem('navScroll')
-    if (shouldScroll) {
-      sessionStorage.removeItem('navScroll')
-      // Start scrolling immediately, retry logic will handle element availability
-      scrollToContent(pathname || '/', false)
+    if (typeof window !== 'undefined') {
+      const shouldScroll = sessionStorage.getItem('navScroll')
+      if (shouldScroll) {
+        sessionStorage.removeItem('navScroll')
+        // Start scrolling immediately, retry logic will handle element availability
+        scrollToContent(pathname || '/', false)
+      }
     }
   }, [pathname])
   
@@ -169,7 +171,9 @@ export default function Nav() {
       scrollToContent(targetPath, true)
     } else {
       // Set flag to scroll after navigation
-      sessionStorage.setItem('navScroll', 'true')
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('navScroll', 'true')
+      }
       // Navigate to new page
       router.push(targetPath)
     }

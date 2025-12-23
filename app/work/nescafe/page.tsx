@@ -10,27 +10,13 @@ import CaseStudyModal from '@/components/CaseStudyModal'
 import OutlineButton from '@/components/OutlineButton'
 import { workItems } from '@/data/workItems'
 import { caseStudyItems } from '@/data/caseStudyItems'
+import { findCampaignRangeIndex, getCampaignRangeModalItems } from '@/utils/campaignUtils'
 import { WorkItem } from '@/data/workItems'
 
 export default function NescafeCaseStudyPage() {
   const router = useRouter()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
-
-  // Filter out case study items from the modal (only show campaign range items)
-  const campaignRangeModalItems = caseStudyItems.filter(
-    (item) => 
-      !(item.client === 'NIVEA' && item.campaign === 'Global Campaign Infrastructure') &&
-      !(item.client === 'Nestlé' && item.campaign === 'Product Textures & Visualisation')
-  )
-
-  // Find campaign range item by matching posterUrl
-  const findCampaignRangeIndex = (posterUrl: string): number => {
-    const index = campaignRangeModalItems.findIndex(
-      (item) => item.posterUrl === posterUrl
-    )
-    return index >= 0 ? index : 0
-  }
 
   const handleCampaignRangeClick = (item: WorkItem) => {
     const index = findCampaignRangeIndex(item.posterUrl)
@@ -280,7 +266,7 @@ export default function NescafeCaseStudyPage() {
       <CaseStudyModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        items={campaignRangeModalItems}
+        items={getCampaignRangeModalItems()}
         initialIndex={selectedIndex}
       />
     </>

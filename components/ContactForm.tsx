@@ -91,7 +91,9 @@ export default function ContactForm() {
           const data = await response.json()
           setStatus('error')
           if (data.errors && Array.isArray(data.errors)) {
-            const errorMessages = data.errors.map((err: any) => err.message || err).join(', ')
+            const errorMessages = data.errors.map((err: { message?: string } | string) => 
+              typeof err === 'string' ? err : err.message || 'Validation error'
+            ).join(', ')
             setErrorMessage(errorMessages)
           } else if (data.error) {
             setErrorMessage(data.error)

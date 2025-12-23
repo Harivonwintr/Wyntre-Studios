@@ -10,7 +10,7 @@ import { caseStudyItems } from '@/data/caseStudyItems'
 export default function WorkItemPage() {
   const params = useParams()
   const router = useRouter()
-  const slug = params.slug as string
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug || ''
   const [isModalOpen, setIsModalOpen] = useState(true)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
