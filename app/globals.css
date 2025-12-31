@@ -1066,20 +1066,36 @@ a.cs-card:hover .card-title {
 }
 
 .client-grid {
-  display: grid;
-  grid-template-columns: repeat(11, 1fr); /* 11 columns for 22 logos = 2 rows */
-  gap: 32px 48px;
-  justify-items: center;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  overflow: hidden;
+  width: 100%;
 }
 
-/* Desktop: Make wrapper divs transparent to grid layout */
 .client-row-wrapper {
-  display: contents;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
 }
 
 .client-row {
-  display: contents;
+  display: flex;
+  gap: 48px;
+  width: fit-content;
+  will-change: transform;
+  animation: scroll-left 40s linear infinite;
+}
+
+.client-row-wrapper:nth-child(2) .client-row {
+  animation: scroll-right 40s linear infinite;
+}
+
+.client-logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .client-logo img {
