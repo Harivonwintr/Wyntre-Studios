@@ -782,8 +782,15 @@ background: linear-gradient(
 /* Mobile */
 @media (max-width: 640px){
   #campaign-range .campaign-grid{
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  
+  #campaign-range .campaign-card .cap {
+    font-size: 10px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
   }
 }
 
