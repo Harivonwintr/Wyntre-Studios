@@ -215,6 +215,7 @@ export default function Nav() {
               className="brand-mark"
               width={100}
               height={100}
+              style={{ width: 'auto', height: '100%' }}
               priority
             />
           </Link>

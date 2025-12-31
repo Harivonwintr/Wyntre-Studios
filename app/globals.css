@@ -154,7 +154,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Brand */
-.brand-mark{ height: 100px; display:block; }
+.brand-mark{ 
+  height: 100px; 
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
 
 /* Links row */
 .nav-links{
@@ -3138,6 +3143,8 @@ a.cs-card:hover .card-title {
 
   .brand-mark {
     height: 80px;
+    width: auto;
+    object-fit: contain;
   }
 
   .nav-links {
@@ -3160,6 +3167,8 @@ a.cs-card:hover .card-title {
 
   .brand-mark {
     height: 60px;
+    width: auto;
+    object-fit: contain;
   }
 
   .hamburger {
