@@ -327,8 +327,6 @@ main {
 .hero {
   position: relative;
   height: 100vh;
-  min-height: 600px;
-  max-height: 1200px;
   overflow: hidden;
 }
 
@@ -3147,8 +3145,7 @@ a.cs-card:hover .card-title {
 /* Hero Section - Tablet */
 @media (max-width: 1024px) {
   .hero {
-    height: 80vh;
-    min-height: 600px;
+    height: 100vh;
   }
 
   .hero-inner {
@@ -3177,8 +3174,7 @@ a.cs-card:hover .card-title {
 /* Hero Section - Mobile */
 @media (max-width: 768px) {
   .hero {
-    height: 70vh;
-    min-height: 500px;
+    height: 100vh;
   }
 
   .hero-inner {
@@ -3210,8 +3206,7 @@ a.cs-card:hover .card-title {
 /* Hero Section - Small Mobile */
 @media (max-width: 480px) {
   .hero {
-    height: 65vh;
-    min-height: 450px;
+    height: 100vh;
   }
 
   .hero-inner {
@@ -3228,22 +3223,9 @@ a.cs-card:hover .card-title {
   }
 }
 
-/* Hero Section - Very Tall Screens */
-@media (min-height: 1200px) {
-  .hero {
-    max-height: 1000px;
-  }
-
-  .hero-inner {
-    top: 45%;
-    transform: translate(-50%, -50%);
-  }
-}
-
 /* Hero Section - Very Short Screens */
 @media (max-height: 600px) {
   .hero {
-    min-height: 500px;
     height: 100vh;
   }
 
@@ -3273,7 +3255,6 @@ a.cs-card:hover .card-title {
 @media (max-width: 768px) and (orientation: landscape) {
   .hero {
     height: 100vh;
-    min-height: 500px;
   }
 
   .hero-inner {
