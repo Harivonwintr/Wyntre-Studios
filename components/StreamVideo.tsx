@@ -35,10 +35,14 @@ export default function StreamVideo({ videoId, autoplay = false }: StreamVideoPr
         width: "100%",
         height: "100%",
         border: "none",
-        display: "block"
+        display: "block",
+        overflow: "hidden",
+        overscrollBehavior: "none",
+        WebkitOverflowScrolling: "touch"
       }}
       allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
       allowFullScreen
+      scrolling="no"
       title="Video player"
     />
   );
