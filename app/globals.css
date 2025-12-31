@@ -762,6 +762,13 @@ background: linear-gradient(
   padding: 0 24px;
 }
 
+@media (max-width: 768px) {
+  #campaign-range #clients .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 /* Tablet */
 @media (max-width: 1024px){
   #campaign-range .campaign-grid{
@@ -907,6 +914,13 @@ background: linear-gradient(
     right: 0;
     margin-left: 0;
     margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .clients-section .container {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
