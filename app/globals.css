@@ -933,8 +933,8 @@ background: linear-gradient(
 
 @media (max-width: 768px) {
   .cs-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 }
 
@@ -3590,7 +3590,8 @@ a.cs-card:hover .card-title {
   }
 
   .cs-grid {
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   .card-content {
