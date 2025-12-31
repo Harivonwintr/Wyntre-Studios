@@ -3765,6 +3765,7 @@ a.cs-card:hover .card-title {
   }
 
   #campaign-range .campaign-grid {
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
 
