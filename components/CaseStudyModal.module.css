@@ -322,8 +322,8 @@
   width: clamp(32px, 4vw, 40px);
   height: clamp(32px, 4vw, 40px);
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  background: transparent;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   display: grid;
@@ -332,13 +332,9 @@
   line-height: 1;
   z-index: 10;
   transition: all 0.2s ease;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 .closeBtnTop:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4);
   color: rgba(255, 255, 255, 1);
   transform: scale(1.05);
 }
