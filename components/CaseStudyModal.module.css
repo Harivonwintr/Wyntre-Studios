@@ -47,7 +47,8 @@
 
 .card {
   width: min(980px, calc(100vw - clamp(16px, 3vw, 56px)));
-  max-width: 100%;
+  max-width: min(980px, calc(100vw - clamp(16px, 3vw, 56px)));
+  min-width: min(980px, calc(100vw - clamp(16px, 3vw, 56px)));
   height: calc(100vh - clamp(16px, 3vw, 56px));
   max-height: calc(100vh - clamp(16px, 3vw, 56px));
   min-height: 0;
@@ -61,7 +62,7 @@
   flex-direction: column;
   overflow: hidden;
   margin: 0;
-  flex-shrink: 1;
+  flex-shrink: 0;
   box-sizing: border-box;
   position: relative;
 }
@@ -407,7 +408,8 @@
 @media (max-width: 1024px) {
   .card {
     width: min(900px, calc(100vw - 40px));
-    max-width: calc(100vw - 40px);
+    max-width: min(900px, calc(100vw - 40px));
+    min-width: min(900px, calc(100vw - 40px));
   }
 
   .meta {
