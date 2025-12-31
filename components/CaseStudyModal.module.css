@@ -8,8 +8,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 28px;
+  padding: clamp(12px, 3vw, 28px);
   overflow: hidden; /* key */
+  box-sizing: border-box;
 }
 
 .backdrop.opening {
@@ -43,6 +44,7 @@
 
 .card {
   width: min(980px, calc(100vw - 56px));
+  max-width: 100%;
   max-height: calc(100vh - 56px);
   min-height: 0; /* key: stop forcing tall card */
   background: #0b0f14;
@@ -52,9 +54,11 @@
   color: rgba(255, 255, 255, 0.92);
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   overflow-y: auto;
   margin: 0;       /* key */
   flex-shrink: 1;  /* key */
+  box-sizing: border-box;
 }
 
 .card.opening {
@@ -90,11 +94,18 @@
 .header {
   margin-bottom: clamp(12px, 2vw, 18px);
   padding-left: clamp(0px, 7vw, 68px); /* Align with video left edge: 54px (nav button) + 14px (gap) */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .contentStage {
   position: relative;
   min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .titleRow {
@@ -104,6 +115,10 @@
   font-size: clamp(16px, 2.5vw, 22px);
   font-weight: 700;
   letter-spacing: 0.01em;
+  width: 100%;
+  max-width: 100%;
+  flex-wrap: wrap;
+  word-break: break-word;
 }
 
 .client {
@@ -137,6 +152,9 @@
   grid-template-columns: clamp(36px, 5.5vw, 54px) 1fr clamp(36px, 5.5vw, 54px);
   align-items: center;
   gap: clamp(8px, 1.5vw, 14px);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .mediaFrame {
@@ -147,6 +165,10 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   height: clamp(240px, 50vw, 520px);
   aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .mediaImg,
@@ -224,6 +246,9 @@
   padding-left: clamp(0px, 7vw, 68px); /* Align with video left edge: 54px (nav button) + 14px (gap) */
   flex: 1; /* Allow meta to grow to fill available space */
   align-items: start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .metaCol {
@@ -260,6 +285,9 @@
   font-size: clamp(11px, 1.5vw, 13px);
   opacity: 0.82;
   letter-spacing: 0.03em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .valueSub {
@@ -267,6 +295,9 @@
   opacity: 0.72;
   letter-spacing: 0.03em;
   margin-top: 2px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .valueBody {
@@ -274,6 +305,9 @@
   line-height: 1.55;
   opacity: 0.8;
   min-height: clamp(40px, 6vw, 60px); /* Ensure consistent height for challenge text */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .footer {
@@ -309,6 +343,7 @@
 @media (max-width: 1024px) {
   .card {
     width: min(900px, calc(100vw - 40px));
+    max-width: calc(100vw - 40px);
   }
 
   .meta {
@@ -335,6 +370,7 @@
 
   .card {
     width: 100%;
+    max-width: 100%;
   }
 
   .meta {
