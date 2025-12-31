@@ -3660,6 +3660,7 @@ a.cs-card:hover .card-title {
 @media (max-width: 768px) {
   #clients {
     padding: 40px 0;
+    overflow: hidden;
   }
 
   .clients-heading {
@@ -3674,6 +3675,54 @@ a.cs-card:hover .card-title {
   .client-logo {
     max-width: 120px;
     max-height: 60px;
+  }
+
+  /* Mobile scrolling animation for client logos */
+  .client-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow: hidden;
+    width: 100%;
+    grid-template-columns: none;
+  }
+
+  .client-row-wrapper {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .client-row {
+    display: flex;
+    gap: 32px;
+    width: fit-content;
+    animation: scroll-left 30s linear infinite;
+  }
+
+  .client-row-wrapper:nth-child(2) .client-row {
+    animation: scroll-right 30s linear infinite;
+  }
+
+  .client-logo {
+    flex-shrink: 0;
+  }
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
 
