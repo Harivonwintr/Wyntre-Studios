@@ -1073,6 +1073,15 @@ a.cs-card:hover .card-title {
   align-items: center;
 }
 
+/* Desktop: Make wrapper divs transparent to grid layout */
+.client-row-wrapper {
+  display: contents;
+}
+
+.client-row {
+  display: contents;
+}
+
 .client-logo img {
   max-height: 48px;
   width: auto;
