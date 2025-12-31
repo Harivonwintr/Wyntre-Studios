@@ -327,6 +327,8 @@ main {
 .hero {
   position: relative;
   height: 100vh;
+  min-height: 600px;
+  max-height: 1200px;
   overflow: hidden;
 }
 
@@ -359,11 +361,16 @@ background: linear-gradient(
 /* Centered hero content */
 .hero-inner {
   position: absolute;
-  top: 669px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   width: min(1100px, 92vw);
   z-index: 2;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 /* Scroll indicator at bottom of hero */
@@ -387,6 +394,8 @@ background: linear-gradient(
   font-weight: 800;
   letter-spacing: .2px;
   color: #fff;
+  margin: 0;
+  width: 100%;
 }
 .hero-title .accent { color: #FEC20E; }
 
@@ -403,8 +412,16 @@ background: linear-gradient(
 .hero-kicker {
   max-width: 48ch;
   color: rgba(255,255,255,.85);
-  margin-top: .75rem;
-  margin-bottom: 1.5rem; /* 👈 add this */
+  margin-top: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.5;
+  width: 100%;
+}
+
+.hero-inner .btn-container {
+  margin-top: 0;
+  width: auto;
 }
 
 .hero-overlay {
@@ -3127,48 +3144,152 @@ a.cs-card:hover .card-title {
   }
 }
 
-/* Hero Section - Mobile & Tablet */
+/* Hero Section - Tablet */
 @media (max-width: 1024px) {
   .hero {
     height: 80vh;
+    min-height: 600px;
   }
 
   .hero-inner {
-    padding: 0 32px;
+    padding: 0 clamp(2rem, 4vw, 3rem);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(1000px, 90vw);
   }
 
   .hero-title {
-    font-size: clamp(3rem, 8vw, 5rem);
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
   }
 
   .hero-kicker {
-    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-size: clamp(1rem, 2vw, 1.2rem);
     max-width: 90%;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero {
-    height: 70vh;
-  }
-
-  .hero-inner {
-    padding: 0 24px;
-  }
-
-  .hero-title {
-    font-size: clamp(2.5rem, 10vw, 4rem);
-    margin-bottom: 1rem;
-  }
-
-  .hero-kicker {
-    font-size: clamp(0.9rem, 3vw, 1.1rem);
-    max-width: 100%;
-    margin-bottom: 1.5rem;
+    margin-top: clamp(0.75rem, 1.5vw, 1rem);
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
   }
 
   .btn-container {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Hero Section - Mobile */
+@media (max-width: 768px) {
+  .hero {
+    height: 70vh;
+    min-height: 500px;
+  }
+
+  .hero-inner {
+    padding: 0 clamp(1.5rem, 5vw, 2rem);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(100%, 92vw);
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    margin-bottom: clamp(0.75rem, 2vw, 1rem);
+  }
+
+  .hero-kicker {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    max-width: 100%;
+    margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
+    margin-bottom: clamp(1rem, 3vw, 1.5rem);
+    line-height: 1.4;
+  }
+
+  .btn-container {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+}
+
+/* Hero Section - Small Mobile */
+@media (max-width: 480px) {
+  .hero {
+    height: 65vh;
+    min-height: 450px;
+  }
+
+  .hero-inner {
+    padding: 0 1.5rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.75rem, 9vw, 2.5rem);
+  }
+
+  .hero-kicker {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* Hero Section - Very Tall Screens */
+@media (min-height: 1200px) {
+  .hero {
+    max-height: 1000px;
+  }
+
+  .hero-inner {
+    top: 45%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Hero Section - Very Short Screens */
+@media (max-height: 600px) {
+  .hero {
+    min-height: 500px;
+    height: 100vh;
+  }
+
+  .hero-inner {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0 2rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-kicker {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .btn-container {
+    margin-top: 0.25rem;
+  }
+}
+
+/* Hero Section - Landscape Mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero {
+    height: 100vh;
+    min-height: 500px;
+  }
+
+  .hero-inner {
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-kicker {
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
   }
 }
 
