@@ -909,18 +909,20 @@ background: linear-gradient(
 
 @media (max-width: 768px) {
   .clients-section {
-    width: 100%;
-    left: 0;
-    right: 0;
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
+    width: 100vw !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 60px;
+    padding-bottom: 60px;
   }
   
   .clients-section .container {
-    padding-left: 0;
-    padding-right: 0;
+    padding-inline: 0 !important;
+    max-width: 100% !important;
   }
 }
 
