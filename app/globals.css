@@ -4511,8 +4511,26 @@ a.cs-card:hover .card-title {
   }
 
   .case-study-campaigns-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .case-study-campaign-card {
+    aspect-ratio: 1;
+  }
+  
+  .case-study-campaign-overlay {
+    padding: 0.75rem;
+  }
+  
+  .case-study-campaign-title {
+    font-size: 0.7rem;
+    line-height: 1.2;
+  }
+  
+  .case-study-campaign-location {
+    font-size: 0.6rem;
+    margin-top: 0.25rem;
   }
 
   .case-study-campaign-overlay {
