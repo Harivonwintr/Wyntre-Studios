@@ -212,6 +212,14 @@ export default function CaseStudyModal({
           aria-modal="true"
           aria-label={`${item.client} ${item.campaign} details`}
         >
+          <button
+            className={styles.closeBtnTop}
+            onClick={handleClose}
+            aria-label="Close modal"
+            type="button"
+          >
+            ×
+          </button>
           <header className={styles.header}>
             <div className={styles.titleRow}>
               <span className={styles.client}>{item.client}</span>
