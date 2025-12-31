@@ -285,6 +285,7 @@
   grid-auto-rows: min-content;
   row-gap: clamp(8px, 1.5vw, 20px);
   align-items: start;
+  min-height: 0;
 }
 
 .block {
@@ -292,10 +293,10 @@
   flex-direction: column;
 }
 
-/* Ensure first items in both columns have same height for proper alignment */
+/* Remove fixed min-height to allow natural content flow */
 .metaCol:first-child .block:first-child,
 .metaCol:last-child .block:first-child {
-  min-height: 48px; /* Approximate height of label + valueStrong */
+  min-height: 0;
 }
 
 .blockFull {
@@ -334,11 +335,12 @@
 
 .valueBody {
   font-size: clamp(10px, 1.2vw, 13px);
-  line-height: 1.5;
+  line-height: 1.4;
   opacity: 0.8;
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
+  margin: 0;
 }
 
 .closeBtnTop {
