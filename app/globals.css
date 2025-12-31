@@ -1080,11 +1080,14 @@ a.cs-card:hover .card-title {
 }
 
 .client-row {
-  display: flex;
+  display: inline-flex;
   gap: 48px;
-  width: fit-content;
+  width: max-content;
   will-change: transform;
   animation: scroll-left 40s linear infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .client-row-wrapper:nth-child(2) .client-row {
@@ -3714,19 +3717,19 @@ a.cs-card:hover .card-title {
 }
 
 @keyframes scroll-left {
-  from {
+  0% {
     transform: translate3d(0, 0, 0);
   }
-  to {
+  100% {
     transform: translate3d(-50%, 0, 0);
   }
 }
 
 @keyframes scroll-right {
-  from {
+  0% {
     transform: translate3d(-50%, 0, 0);
   }
-  to {
+  100% {
     transform: translate3d(0, 0, 0);
   }
 }
