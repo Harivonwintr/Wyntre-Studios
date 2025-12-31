@@ -3624,8 +3624,9 @@ a.cs-card:hover .card-title {
   }
 
   .card-title {
-    font-size: clamp(1rem, 3vw, 1.3rem);
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
     margin-bottom: 0.5rem;
+    line-height: 1.3;
   }
 
   .card-description {
