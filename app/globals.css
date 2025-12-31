@@ -3752,6 +3752,18 @@ a.cs-card:hover .card-title {
   .drives-commitment {
     font-size: clamp(1.1rem, 4vw, 1.5rem);
   }
+
+  /* Crop image horizontally on mobile */
+  .drives-image {
+    overflow: hidden;
+  }
+
+  .drives-photo {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: center center;
+  }
 }
 
 /* Footer - Mobile & Tablet */
