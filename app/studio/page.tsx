@@ -14,9 +14,9 @@ export default function StudioPage() {
       {/* Services / Spine Section */}
       <section id="spine-seq" className="spine-band">
         <div className="spine-stage">
-          <h1 className="studio-hero-line">We think like designers.</h1>
-          <h1 className="studio-hero-line">solve like engineers.</h1>
-          <h1 className="studio-hero-line studio-hero-accent">commit like partners.</h1>
+          <h1 className="studio-hero-line"><span className="accent-yellow">think</span> like designers.</h1>
+          <h1 className="studio-hero-line"><span className="accent-yellow">solve</span> like engineers.</h1>
+          <h1 className="studio-hero-line"><span className="accent-yellow">commit</span> like partners.</h1>
         </div>
       </section>
 

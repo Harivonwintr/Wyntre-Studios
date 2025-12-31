@@ -324,6 +324,10 @@ main {
   color: var(--accent-yellow);
 }
 
+.accent-yellow {
+  color: var(--accent-yellow);
+}
+
 /* Kicker text (small uppercase section headers) */
 .kicker {
   letter-spacing: .2em;
