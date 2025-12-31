@@ -409,6 +409,14 @@
     max-width: 100%;
   }
 
+  .closeBtnTop {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+    top: clamp(12px, 2vw, 16px);
+    right: clamp(12px, 2vw, 16px);
+  }
+
   .meta {
     row-gap: clamp(12px, 2.5vw, 16px);
   }
