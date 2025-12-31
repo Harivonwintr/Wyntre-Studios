@@ -633,6 +633,14 @@ background: linear-gradient(
   visibility: visible !important;
 }
 
+/* Mobile: Campaign range should be 2 columns on all pages */
+@media (max-width: 640px) {
+  .case-study-content #campaign-range .campaign-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem;
+  }
+}
+
 .case-study-content #campaign-range .campaign-card {
   position: relative !important;
   aspect-ratio: 16 / 11;
@@ -782,15 +790,15 @@ background: linear-gradient(
 /* Mobile */
 @media (max-width: 640px){
   #campaign-range .campaign-grid{
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
   
   #campaign-range .campaign-card .cap {
-    font-size: 10px;
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
+    font-size: 11px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
   }
 }
 
