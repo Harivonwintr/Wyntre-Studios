@@ -1,18 +1,38 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import OutlineButton from '@/components/OutlineButton'
 import ScrollIndicator from '@/components/ScrollIndicator'
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    // Defer video loading until after page is interactive
+    const loadVideo = () => {
+      if (videoRef.current) {
+        videoRef.current.load()
+      }
+    }
+    
+    // Load video after a short delay to prioritize page content
+    if (document.readyState === 'complete') {
+      setTimeout(loadVideo, 100)
+    } else {
+      window.addEventListener('load', () => setTimeout(loadVideo, 100))
+    }
+  }, [])
+
   return (
     <section id="hero" className="hero">
       <video
+        ref={videoRef}
         className="hero-media"
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="none"
       >
         <source src="/assets/Sizzle Reel.mp4" type="video/mp4" />
       </video>
