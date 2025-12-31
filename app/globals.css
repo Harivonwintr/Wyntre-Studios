@@ -100,8 +100,8 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   z-index: 999;
   display: none;
   will-change: opacity;
