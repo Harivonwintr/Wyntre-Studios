@@ -413,8 +413,8 @@
   }
 
   .meta {
-    grid-template-columns: 1fr;
-    column-gap: 0;
+    grid-template-columns: 1fr 1fr;
+    column-gap: clamp(12px, 2vw, 24px);
     row-gap: clamp(8px, 1.2vw, 12px);
     padding-left: 0;
   }
