@@ -3690,39 +3690,44 @@ a.cs-card:hover .card-title {
   .client-row-wrapper {
     overflow: hidden;
     width: 100%;
+    position: relative;
   }
 
   .client-row {
     display: flex;
     gap: 32px;
     width: fit-content;
-    animation: scroll-left 30s linear infinite;
+    will-change: transform;
+    animation: scroll-left 40s linear infinite;
   }
 
   .client-row-wrapper:nth-child(2) .client-row {
-    animation: scroll-right 30s linear infinite;
+    animation: scroll-right 40s linear infinite;
   }
 
   .client-logo {
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
 @keyframes scroll-left {
-  0% {
-    transform: translateX(0);
+  from {
+    transform: translate3d(0, 0, 0);
   }
-  100% {
-    transform: translateX(-50%);
+  to {
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
 @keyframes scroll-right {
-  0% {
-    transform: translateX(-50%);
+  from {
+    transform: translate3d(-50%, 0, 0);
   }
-  100% {
-    transform: translateX(0);
+  to {
+    transform: translate3d(0, 0, 0);
   }
 }
 
