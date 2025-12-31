@@ -421,3 +421,21 @@
     row-gap: clamp(12px, 2.5vw, 16px);
   }
 }
+
+/* Disable hover animations on mobile and tablet */
+@media (max-width: 1024px) {
+  .navBtnLeft:hover span,
+  .navBtnRight:hover span {
+    opacity: inherit !important;
+    transform: none !important;
+  }
+  
+  .closeBtnTop:hover {
+    color: inherit !important;
+    transform: none !important;
+  }
+  
+  .closeBtn:hover {
+    color: inherit !important;
+  }
+}

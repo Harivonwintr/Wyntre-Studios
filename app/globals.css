@@ -4495,3 +4495,114 @@ a.cs-card:hover .card-title {
     padding: 1.5rem;
   }
 }
+
+/* Disable all hover animations on mobile and tablet */
+@media (max-width: 1024px) {
+  /* Navigation hover effects */
+  .nav-links a:hover,
+  .nav-link:hover,
+  .nav-links a.active:hover,
+  .nav-link.active:hover {
+    color: inherit !important;
+    transform: none !important;
+  }
+  
+  .nav-dropdown:hover .dropdown-arrow {
+    transform: none !important;
+  }
+  
+  .nav-dropdown:hover .dropdown-menu {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  .dropdown-menu a:hover {
+    background: transparent !important;
+    color: inherit !important;
+  }
+  
+  /* Services/Spine hover effects */
+  .sp-item:hover {
+    opacity: inherit !important;
+    transform: none !important;
+  }
+  
+  /* Case study card hover effects */
+  .cs-card:hover .card-title,
+  article.cs-card:hover .card-title,
+  a.cs-card:hover .card-title {
+    transform: none !important;
+  }
+  
+  .cs-card:hover .card-description {
+    opacity: 0 !important;
+    transform: translate3d(0, 10px, 0) !important;
+    pointer-events: none !important;
+  }
+  
+  .cs-card:hover .card-read-more {
+    opacity: 0 !important;
+    transform: translate3d(0, 10px, 0) !important;
+    pointer-events: none !important;
+  }
+  
+  .cs-card:hover::after {
+    opacity: 0 !important;
+  }
+  
+  /* Client logo hover effects */
+  .client-logo img:hover {
+    filter: grayscale(1) brightness(.85) !important;
+    opacity: 0.75 !important;
+    transform: none !important;
+  }
+  
+  /* Footer hover effects */
+  .footer-col a:hover {
+    color: inherit !important;
+  }
+  
+  /* Button hover effects */
+  .btn-link:hover,
+  .btn-send:hover {
+    background: inherit !important;
+    color: inherit !important;
+    transform: none !important;
+  }
+  
+  /* Info item hover effects */
+  .info-item a:hover,
+  .studio-contact .info-item a:hover {
+    color: inherit !important;
+  }
+  
+  /* Case study navigation hover effects */
+  .site-header.case-study-nav .nav-links a:hover,
+  .site-header.case-study-nav .nav-link:hover {
+    color: inherit !important;
+    transform: none !important;
+  }
+  
+  .site-header.case-study-nav .nav-links a.active:hover,
+  .site-header.case-study-nav .nav-link.active:hover {
+    color: inherit !important;
+  }
+  
+  .case-study-back:hover,
+  .case-study-back-arrow:hover {
+    transform: none !important;
+    opacity: inherit !important;
+  }
+  
+  .case-study-other-link:hover {
+    color: inherit !important;
+    transform: none !important;
+  }
+  
+  /* Campaign range button hover */
+  #campaign-range .btn-link:hover {
+    background: inherit !important;
+    color: inherit !important;
+  }
+}

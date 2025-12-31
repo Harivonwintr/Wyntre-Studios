@@ -87,6 +87,15 @@
 .submitButton:hover:not(:disabled) {
   background: #fff;
   color: #0a0b0d;
+}
+
+/* Disable hover animations on mobile and tablet */
+@media (max-width: 1024px) {
+  .submitButton:hover:not(:disabled) {
+    background: inherit !important;
+    color: inherit !important;
+  }
+}
   border-color: #0a0b0d;
 }
 

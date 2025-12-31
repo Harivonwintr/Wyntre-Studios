@@ -68,3 +68,14 @@
   outline-offset: 4px;
   border-radius: 999px;
 }
+
+/* Disable hover animations on mobile and tablet */
+@media (max-width: 1024px) {
+  .btn:hover {
+    transform: none !important;
+  }
+  
+  .btn:hover .rect {
+    stroke-dashoffset: 1 !important;
+  }
+}
