@@ -3702,39 +3702,13 @@ a.cs-card:hover .card-title {
     max-height: 60px;
   }
 
-  /* Mobile scrolling animation for client logos */
+  /* Mobile: Adjust gap for smaller screens */
   .client-grid {
-    display: flex;
-    flex-direction: column;
     gap: 24px;
-    overflow: hidden;
-    width: 100%;
-    grid-template-columns: none;
-  }
-
-  .client-row-wrapper {
-    overflow: hidden;
-    width: 100%;
-    position: relative;
   }
 
   .client-row {
-    display: flex;
     gap: 32px;
-    width: fit-content;
-    will-change: transform;
-    animation: scroll-left 40s linear infinite;
-  }
-
-  .client-row-wrapper:nth-child(2) .client-row {
-    animation: scroll-right 40s linear infinite;
-  }
-
-  .client-logo {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }
 
