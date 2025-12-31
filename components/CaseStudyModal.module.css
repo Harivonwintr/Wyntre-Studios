@@ -46,33 +46,24 @@
 }
 
 .card {
-  width: min(980px, calc(100vw - 56px));
+  width: min(980px, calc(100vw - clamp(16px, 3vw, 56px)));
   max-width: 100%;
-  max-height: calc(100vh - 56px);
-  min-height: 0; /* key: stop forcing tall card */
+  height: calc(100vh - clamp(16px, 3vw, 56px));
+  max-height: calc(100vh - clamp(16px, 3vw, 56px));
+  min-height: 0;
   background: #0b0f14;
-  border-radius: clamp(16px, 2.5vw, 28px);
+  border-radius: clamp(12px, 2vw, 28px);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
-  padding: clamp(20px, 3.5vw, 34px) clamp(16px, 2.5vw, 24px) clamp(16px, 2.5vw, 26px);
-  padding-top: clamp(50px, 6vw, 60px); /* Extra padding for top close button */
+  padding: clamp(12px, 2vw, 20px) clamp(12px, 2vw, 24px) clamp(12px, 2vw, 20px);
+  padding-top: clamp(40px, 5vw, 60px);
   color: rgba(255, 255, 255, 0.92);
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: auto;
-  margin: 0;       /* key */
-  flex-shrink: 1;  /* key */
+  overflow: hidden;
+  margin: 0;
+  flex-shrink: 1;
   box-sizing: border-box;
   position: relative;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  /* Hide scrollbar on iOS */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-
-.card::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
 }
 
 .card.opening {
@@ -106,11 +97,12 @@
 }
 
 .header {
-  margin-bottom: clamp(12px, 2vw, 18px);
-  padding-left: clamp(0px, 7vw, 68px); /* Align with video left edge: 54px (nav button) + 14px (gap) */
+  margin-bottom: clamp(8px, 1.5vw, 12px);
+  padding-left: clamp(0px, 5vw, 68px);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .contentStage {
@@ -118,24 +110,26 @@
   min-height: 0;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   box-sizing: border-box;
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: clamp(8px, 1.5vw, 12px);
 }
 
 .titleRow {
   display: flex;
   align-items: baseline;
-  gap: clamp(6px, 1vw, 8px);
-  font-size: clamp(16px, 2.5vw, 22px);
+  gap: clamp(4px, 0.8vw, 8px);
+  font-size: clamp(14px, 2vw, 22px);
   font-weight: 700;
   letter-spacing: 0.01em;
   width: 100%;
   max-width: 100%;
   flex-wrap: wrap;
   word-break: break-word;
+  line-height: 1.2;
 }
 
 .client {
@@ -153,45 +147,50 @@
 }
 
 .subtitle {
-  margin-top: clamp(4px, 0.8vw, 6px);
+  margin-top: clamp(2px, 0.5vw, 4px);
   display: flex;
-  gap: clamp(6px, 1vw, 8px);
-  font-size: clamp(11px, 1.5vw, 13px);
+  gap: clamp(4px, 0.8vw, 8px);
+  font-size: clamp(10px, 1.2vw, 13px);
   letter-spacing: 0.04em;
   opacity: 0.7;
+  line-height: 1.3;
 }
 
 .mediaWrap {
   position: relative;
-  margin-top: clamp(10px, 1.5vw, 14px);
-  margin-bottom: clamp(16px, 2.5vw, 26px);
+  margin: 0;
   display: grid;
-  grid-template-columns: clamp(36px, 5.5vw, 54px) 1fr clamp(36px, 5.5vw, 54px);
+  grid-template-columns: clamp(28px, 4vw, 54px) 1fr clamp(28px, 4vw, 54px);
   align-items: center;
-  gap: clamp(8px, 1.5vw, 14px);
+  gap: clamp(6px, 1vw, 14px);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  flex-shrink: 1;
+  min-height: 0;
 }
 
 .mediaFrame {
   position: relative;
-  border-radius: clamp(10px, 1.5vw, 14px);
+  border-radius: clamp(8px, 1.2vw, 14px);
   overflow: hidden;
   background: #0a0d12;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  height: clamp(240px, 50vw, 520px);
-  aspect-ratio: 16 / 9;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
   width: 100%;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: none;
+  flex-shrink: 1;
+  max-height: 40vh;
 }
 
 .mediaImg,
 .mediaVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -262,21 +261,29 @@
 .meta {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: clamp(0px, 9vw, 90px);
-  row-gap: clamp(16px, 2.5vw, 26px);
-  margin-top: clamp(4px, 0.8vw, 6px);
-  padding-left: clamp(0px, 7vw, 68px); /* Align with video left edge: 54px (nav button) + 14px (gap) */
+  column-gap: clamp(8px, 3vw, 90px);
+  row-gap: clamp(8px, 1.5vw, 20px);
+  margin: 0;
+  padding-left: clamp(0px, 5vw, 68px);
   flex: 1;
   align-items: start;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.meta::-webkit-scrollbar {
+  display: none;
 }
 
 .metaCol {
   display: grid;
   grid-auto-rows: min-content;
-  row-gap: 26px;
+  row-gap: clamp(8px, 1.5vw, 20px);
   align-items: start;
 }
 
@@ -297,36 +304,38 @@
 }
 
 .label {
-  font-size: clamp(14px, 2vw, 18px);
+  font-size: clamp(11px, 1.5vw, 18px);
   font-weight: 800;
-  margin-bottom: clamp(6px, 1.2vw, 10px);
+  margin-bottom: clamp(4px, 0.8vw, 8px);
   letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 .valueStrong {
-  font-size: clamp(11px, 1.5vw, 13px);
+  font-size: clamp(10px, 1.2vw, 13px);
   opacity: 0.82;
   letter-spacing: 0.03em;
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
+  line-height: 1.4;
 }
 
 .valueSub {
-  font-size: clamp(11px, 1.5vw, 13px);
+  font-size: clamp(9px, 1.1vw, 13px);
   opacity: 0.72;
   letter-spacing: 0.03em;
   margin-top: 2px;
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
+  line-height: 1.4;
 }
 
 .valueBody {
-  font-size: clamp(11px, 1.5vw, 13px);
-  line-height: 1.55;
+  font-size: clamp(10px, 1.2vw, 13px);
+  line-height: 1.5;
   opacity: 0.8;
-  min-height: clamp(40px, 6vw, 60px); /* Ensure consistent height for challenge text */
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
@@ -365,8 +374,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: auto; /* Push footer to bottom */
-  padding-top: clamp(20px, 3vw, 60px);
+  margin-top: auto;
+  padding-top: clamp(8px, 1.5vw, 20px);
   flex-shrink: 0;
 }
 
