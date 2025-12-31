@@ -294,8 +294,8 @@
 }
 
 /* Remove fixed min-height to allow natural content flow */
-.metaCol:first-child .block:first-child,
-.metaCol:last-child .block:first-child {
+/* Ensure consistent styling for all blocks */
+.metaCol .block {
   min-height: 0;
 }
 
