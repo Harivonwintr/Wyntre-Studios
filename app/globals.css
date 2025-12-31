@@ -3760,7 +3760,7 @@ a.cs-card:hover .card-title {
 
   .drives-photo {
     width: 100%;
-    height: 300px;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     object-position: center 30%;
   }
