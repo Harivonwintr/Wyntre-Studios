@@ -111,57 +111,63 @@ export default function Home() {
                 {/* First row - 11 logos */}
                 <div className="client-row-wrapper">
                   <div className="client-row">
-                    <div className="client-logo"><Image src="/assets/clients/nivea.png" alt="Nivea" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/starbucks.png" alt="Starbucks" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/spotify.png" alt="Spotify" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/nescafe.png" alt="Nescafe" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/realmadrid.png" alt="Real Madrid" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/subway.png" alt="Standard Bank" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/visa.png" alt="Visa" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/donjulio.png" alt="Don Julio" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/pmi.png" alt="DN" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/mcdonalds.png" alt="McDonalds" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/Microsoft Logo.png" alt="Microsoft" width={120} height={48} /></div>
-                    {/* Duplicate for seamless loop */}
-                    <div className="client-logo"><Image src="/assets/clients/nivea.png" alt="Nivea" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/starbucks.png" alt="Starbucks" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/spotify.png" alt="Spotify" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/nescafe.png" alt="Nescafe" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/realmadrid.png" alt="Real Madrid" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/subway.png" alt="Standard Bank" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/visa.png" alt="Visa" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/donjulio.png" alt="Don Julio" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/pmi.png" alt="DN" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/mcdonalds.png" alt="McDonalds" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/Microsoft Logo.png" alt="Microsoft" width={120} height={48} /></div>
+                    <div className="client-row-segment">
+                      <div className="client-logo"><Image src="/assets/clients/nivea.png" alt="Nivea" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/starbucks.png" alt="Starbucks" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/spotify.png" alt="Spotify" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/nescafe.png" alt="Nescafe" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/realmadrid.png" alt="Real Madrid" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/subway.png" alt="Standard Bank" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/visa.png" alt="Visa" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/donjulio.png" alt="Don Julio" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/pmi.png" alt="DN" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/mcdonalds.png" alt="McDonalds" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/Microsoft Logo.png" alt="Microsoft" width={120} height={48} /></div>
+                    </div>
+                    <div className="client-row-segment" aria-hidden>
+                      <div className="client-logo"><Image src="/assets/clients/nivea.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/starbucks.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/spotify.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/nescafe.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/realmadrid.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/subway.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/visa.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/donjulio.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/pmi.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/mcdonalds.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/Microsoft Logo.png" alt="" width={120} height={48} /></div>
+                    </div>
                   </div>
                 </div>
                 {/* Second row - 11 logos */}
                 <div className="client-row-wrapper">
                   <div className="client-row">
-                    <div className="client-logo"><Image src="/assets/clients/ibis.png" alt="Ibis Hotels" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/comfort.png" alt="Comfort" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/tork.png" alt="Tork" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/publicis.png" alt="Sun" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/discovery.png" alt="Volkswagen" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/oldmutual.png" alt="Scissors" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/fnb.png" alt="Yin" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/mtn.png" alt="MTN" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/springboks.png" alt="Springboks" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/playgirl.png" alt="Playgirl" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/Xbox Logo.png" alt="Xbox" width={120} height={48} /></div>
-                    {/* Duplicate for seamless loop */}
-                    <div className="client-logo"><Image src="/assets/clients/ibis.png" alt="Ibis Hotels" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/comfort.png" alt="Comfort" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/tork.png" alt="Tork" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/publicis.png" alt="Sun" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/discovery.png" alt="Volkswagen" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/oldmutual.png" alt="Scissors" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/fnb.png" alt="Yin" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/mtn.png" alt="MTN" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/springboks.png" alt="Springboks" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/playgirl.png" alt="Playgirl" width={120} height={48} /></div>
-                    <div className="client-logo"><Image src="/assets/clients/Xbox Logo.png" alt="Xbox" width={120} height={48} /></div>
+                    <div className="client-row-segment">
+                      <div className="client-logo"><Image src="/assets/clients/ibis.png" alt="Ibis Hotels" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/comfort.png" alt="Comfort" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/tork.png" alt="Tork" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/publicis.png" alt="Sun" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/discovery.png" alt="Volkswagen" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/oldmutual.png" alt="Scissors" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/fnb.png" alt="Yin" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/mtn.png" alt="MTN" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/springboks.png" alt="Springboks" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/playgirl.png" alt="Playgirl" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/Xbox Logo.png" alt="Xbox" width={120} height={48} /></div>
+                    </div>
+                    <div className="client-row-segment" aria-hidden>
+                      <div className="client-logo"><Image src="/assets/clients/ibis.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/comfort.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/tork.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/publicis.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/discovery.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/oldmutual.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/fnb.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/mtn.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/springboks.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/playgirl.png" alt="" width={120} height={48} /></div>
+                      <div className="client-logo"><Image src="/assets/clients/Xbox Logo.png" alt="" width={120} height={48} /></div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -79,3 +79,15 @@
     stroke-dashoffset: 1 !important;
   }
 }
+
+@media (max-width: 768px) {
+  .btn {
+    min-height: 48px;
+    padding: 0 24px;
+  }
+
+  .label {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+  }
+}

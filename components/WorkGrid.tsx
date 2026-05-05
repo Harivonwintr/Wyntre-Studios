@@ -59,7 +59,7 @@ export default function WorkGrid({ items, showCaseStudies, showCampaignRange, on
                   alt={`${item.client} - ${item.campaign}`}
                   fill
                   style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 520px) 100vw, (max-width: 768px) 90vw, 50vw"
                 />
                 <div className="grad"></div>
                 <div className="card-content">
@@ -94,7 +94,7 @@ export default function WorkGrid({ items, showCaseStudies, showCampaignRange, on
                 alt={`${item.client} - ${item.campaign}`}
                 fill
                 className="object-cover"
-                sizes="(max-width: 1024px) 50vw, 33vw"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
               />
               <div className="grad"></div>
               <div className="cap">{item.client} | {item.campaign}</div>

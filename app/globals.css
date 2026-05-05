@@ -146,7 +146,10 @@ h1, h2, h3, h4, h5, h6 {
 .nav-inner{
   max-width: 1200px;
   margin: 0 auto;
-  padding: 18px 24px;      /* make it taller → bump to 24/28px */
+  padding: 18px 24px;
+  padding-top: max(18px, env(safe-area-inset-top, 0px));
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -371,7 +374,10 @@ main {
 /* Layout */
 .hero {
   position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -1164,8 +1170,9 @@ a.cs-card:hover .card-title {
 }
 
 .client-row {
-  display: inline-flex;
-  gap: 48px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
   width: max-content;
   will-change: transform;
   animation: scroll-left 40s linear infinite;
@@ -1175,7 +1182,21 @@ a.cs-card:hover .card-title {
 }
 
 .client-row-wrapper:nth-child(2) .client-row {
-  animation: scroll-right 40s linear infinite;
+  animation-name: scroll-right;
+}
+
+/*
+ * Each segment: 11 logos + internal gaps + trailing space = one loop width.
+ * Two identical segments → total width is exactly 2× loop, so -50% is seamless.
+ * (A single flex row of 22 items with gap gives 21 gaps; half width ≠ one loop.)
+ */
+.client-row-segment {
+  --marquee-gap: 48px;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--marquee-gap);
+  padding-inline-end: var(--marquee-gap);
 }
 
 .client-logo {
@@ -1183,10 +1204,12 @@ a.cs-card:hover .card-title {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 132px;
 }
 
 .client-logo img {
   max-height: 48px;
+  max-width: 120px;
   width: auto;
   filter: grayscale(1) brightness(.85);
   opacity: 0.75;
@@ -1431,26 +1454,23 @@ a.cs-card:hover .card-title {
 }
 
 /* Responsive */
-@media (max-width: 980px){
-  .footer-grid{
-    grid-template-columns: 1fr 1fr; /* logo + two cols per row */
+@media (max-width: 980px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
   }
-.footer-brand {
-  display: flex;
-  align-items: center;      /* vertical centering */
-  justify-content: center;  /* horizontal centering */
-  height: 100%;             /* fill grid cell */
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
 }
-@media (max-width: 640px){
-.footer-grid {
-  display: grid;
-  grid-template-columns: 220px repeat(4, 1fr);
-  align-items: center; /* vertical centering for all cells */
-  min-height: 260px;   /* or larger if needed */
-}
-  .footer-logo{ height: 52px; }
-  .footer-meta{ text-align: left; } /* matches your screenshot */
-}
+
+@media (max-width: 640px) {
+  .footer-meta {
+    text-align: left;
+  }
 }
 
 #clients { 
@@ -1909,13 +1929,17 @@ a.cs-card:hover .card-title {
   position: relative;
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
 }
 
 .studio-hero-image {
   position: relative;
   width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
 }
 
 .studio-hero-overlay {
@@ -2523,13 +2547,32 @@ a.cs-card:hover .card-title {
 
 @media (max-width: 1024px) {
   .rescue-stories-grid {
-    grid-template-columns: repeat(2, 1fr);
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .rescue-story-card {
+    width: min(100%, 420px);
+  }
+
+  .rescue-story-card.isActive {
+    transform: translate3d(0, 0, 0) scale(1.04) !important;
   }
 }
 
 @media (max-width: 640px) {
-  .rescue-stories-grid {
-    grid-template-columns: 1fr;
+  .rescue-stories {
+    padding: 80px 0;
+  }
+
+  .rescue-stories-header {
+    margin-bottom: 2.5rem;
+    padding: 0 16px;
+  }
+
+  .rescue-story-card.isActive {
+    transform: translate3d(0, 0, 0) scale(1) !important;
   }
 }
 
@@ -2692,6 +2735,7 @@ a.cs-card:hover .card-title {
   position: relative;
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
 }
 
@@ -2715,7 +2759,10 @@ a.cs-card:hover .card-title {
 .services-hero-image {
   position: relative;
   width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
 }
 
 .services-hero-overlay {
@@ -3469,16 +3516,36 @@ a.cs-card:hover .card-title {
   .spine-stage {
     height: auto;
     gap: 1.5rem;
-    padding: 0 20px;
+    padding: 0 clamp(16px, 4vw, 24px);
+  }
+
+  .spine-headline {
+    text-align: center;
+    padding: 0 4px;
   }
 
   .sp-hdn {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
+    display: block;
+    margin-bottom: 0.35em;
   }
 
   .sp-line {
     font-size: clamp(1.3rem, 5.5vw, 2.2rem);
+    display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35em 0.5em;
+    margin-left: 0;
+    white-space: normal;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .sp-line .ti-group {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .sp-context {
@@ -3488,6 +3555,7 @@ a.cs-card:hover .card-title {
 
   .sp-services {
     flex-wrap: wrap;
+    justify-content: center;
     gap: 16px 20px;
     padding: 0 16px;
   }
@@ -3547,6 +3615,11 @@ a.cs-card:hover .card-title {
   .studio-founder-image {
     max-width: 100%;
   }
+
+  .studio-founder-image-wrapper {
+    transform: scale(1.04);
+    transform-origin: center top;
+  }
 }
 
 @media (max-width: 768px) {
@@ -3570,6 +3643,11 @@ a.cs-card:hover .card-title {
     font-size: clamp(0.9rem, 3vw, 1.1rem);
   }
 
+  .studio-great-work-heading,
+  .studio-great-work-text {
+    white-space: normal;
+  }
+
   .studio-founder-heading,
   .studio-vision-heading,
   .studio-mission-heading {
@@ -3584,9 +3662,7 @@ a.cs-card:hover .card-title {
 
   .studio-founder-image-wrapper {
     max-width: 100%;
-  }
-
-  .studio-founder-image-wrapper {
+    transform: none;
     margin-bottom: 2.5rem;
   }
 
@@ -3714,6 +3790,17 @@ a.cs-card:hover .card-title {
     padding: 60px 0;
   }
 
+  .cs-intro {
+    margin-bottom: 2rem;
+    padding: 0 4px;
+  }
+
+  .cs-kicker {
+    font-size: clamp(0.95rem, 3.2vw, 1.0625rem);
+    line-height: 1.65;
+    max-width: 36ch;
+  }
+
   .cs-subheading {
     font-size: clamp(1.5rem, 5vw, 2.2rem);
     margin-bottom: 2rem;
@@ -3722,6 +3809,7 @@ a.cs-card:hover .card-title {
   .cs-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    max-width: 100%;
   }
 
   .card-content {
@@ -3741,6 +3829,16 @@ a.cs-card:hover .card-title {
 
   .card-read-more {
     font-size: 0.85rem;
+  }
+}
+
+/* Narrow phones: one case-study card per row (must follow 768px block) */
+@media (max-width: 520px) {
+  .cs-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    max-width: 420px;
+    margin-inline: auto;
   }
 }
 
@@ -3805,7 +3903,8 @@ a.cs-card:hover .card-title {
   }
 
   .client-logo {
-    max-width: 120px;
+    width: 112px;
+    max-width: 112px;
     max-height: 60px;
   }
 
@@ -3814,8 +3913,8 @@ a.cs-card:hover .card-title {
     gap: 24px;
   }
 
-  .client-row {
-    gap: 32px;
+  .client-row-segment {
+    --marquee-gap: 32px;
   }
 }
 
@@ -3837,26 +3936,45 @@ a.cs-card:hover .card-title {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .client-row {
+    animation: none;
+    transform: none;
+  }
+}
+
 /* Drives Section - Mobile & Tablet */
 @media (max-width: 768px) {
   #drives-seq {
     padding: 60px 0;
   }
 
+  .drives-section {
+    min-height: 0;
+    padding: 48px 0;
+  }
+
   .drives-title {
-    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-size: 0.8125rem;
+    margin-bottom: 1rem;
   }
 
   .drives-headline {
-    font-size: clamp(1.8rem, 6vw, 3rem);
+    font-size: clamp(1.65rem, 7vw, 2.75rem);
+    line-height: 1.12;
   }
 
-  .drives-text {
-    font-size: clamp(0.95rem, 3vw, 1.1rem);
+  .drives-headline span {
+    white-space: normal;
+  }
+
+  .drives-text p {
+    font-size: clamp(0.95rem, 3.5vw, 1.0625rem);
+    line-height: 1.65;
   }
 
   .drives-commitment {
-    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    font-size: clamp(1.15rem, 4.5vw, 1.65rem);
   }
 
   /* Crop image horizontally on mobile */
@@ -4506,18 +4624,18 @@ a.cs-card:hover .card-title {
   }
 
   .case-study-overview-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.25rem;
   }
 
   .case-study-overview-label {
-    font-size: 0.65rem;
-    margin-bottom: 0.25rem;
+    font-size: 0.7rem;
+    margin-bottom: 0.35rem;
   }
 
   .case-study-overview-value {
-    font-size: 0.75rem;
-    line-height: 1.2;
+    font-size: 0.8125rem;
+    line-height: 1.35;
   }
 
   .case-study-content {
@@ -4553,8 +4671,8 @@ a.cs-card:hover .card-title {
   }
 
   .case-study-campaigns-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
   
   .case-study-campaign-card {
@@ -4562,21 +4680,17 @@ a.cs-card:hover .card-title {
   }
   
   .case-study-campaign-overlay {
-    padding: 0.75rem;
+    padding: 0.875rem;
   }
   
   .case-study-campaign-title {
-    font-size: 0.7rem;
-    line-height: 1.2;
+    font-size: 0.75rem;
+    line-height: 1.25;
   }
   
   .case-study-campaign-location {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     margin-top: 0.25rem;
-  }
-
-  .case-study-campaign-overlay {
-    padding: 1.25rem;
   }
 
   .case-study-other-overlay {
