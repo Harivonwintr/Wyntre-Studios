@@ -117,7 +117,7 @@ export default function BriefPanel({ isOpen, onClose }: Props) {
 
         <p className={styles.direct}>
           {/* Pinned in the empty space at the foot of the panel, above the email line */}
-          <img className={styles.note} src="/assets/notes/great-stories.webp" alt="" />
+          <img loading="lazy" decoding="async" className={styles.note} src="/assets/notes/great-stories.webp" alt="" />
           <span className={styles.directLabel}>Rather email?</span>
           <a href="mailto:hari@wyntrestudios.com">hari@wyntrestudios.com</a>
         </p>

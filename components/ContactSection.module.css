@@ -280,4 +280,14 @@
     padding-left: 0;
     border-top: 1px solid var(--contact-rule);
     border-left: 0;
-  }}
+  }
+
+  /* The form sits straight under the postcard here, so the note is stuck on the postcard's corner instead */
+  .briefNote {
+    top: auto;
+    bottom: -12%;
+    right: -3%;
+    width: 30%;
+    margin-top: 0;
+  }
+}

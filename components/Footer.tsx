@@ -31,7 +31,7 @@ export default function Footer() {
         <div className={styles.columns}>
           <div className={styles.brand}>
             <Link href="/" aria-label="Wyntre Studios home">
-              <Image src="/assets/logo.svg" alt="Wyntre Studios" width={120} height={120} className={styles.logo} />
+              <Image src="/assets/logo.webp" alt="Wyntre Studios" width={120} height={120} className={styles.logo} />
             </Link>
           </div>
 

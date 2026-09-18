@@ -83,13 +83,6 @@
     width: 100%;
   }
 
-  /* Heading, board and count all fit one screen: on shorter screens the board narrows to fit the height
-     (it is about 1.6 times as wide as tall; 27rem covers the heading, intro, count and padding) */
-  .section[data-flight-stage] .board,
-  .section[data-flight-stage] .pagination {
-    max-width: min(1600px, calc((100vh - 27rem) * 1.6));
-  }
-
   .section[data-flight-stage] .header {
     margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
   }

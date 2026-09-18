@@ -46,11 +46,11 @@ export default function TapedPhoto({
         <Image src={src} alt={alt} fill sizes={sizes} className={styles.image} style={{ objectPosition: focus ?? 'center' }} />
       </span>
       {tape === 'top' ? (
-        <img className={`${styles.tape} ${styles.tapeTop}`} src="/assets/contact/tape.webp" alt="" aria-hidden="true" />
+        <img loading="lazy" decoding="async" className={`${styles.tape} ${styles.tapeTop}`} src="/assets/contact/tape.webp" alt="" aria-hidden="true" />
       ) : (
         <>
-          <img className={`${styles.tape} ${styles.tapeStart}`} src="/assets/work/tape/metallic-a.webp" alt="" aria-hidden="true" />
-          <img className={`${styles.tape} ${styles.tapeEnd}`} src="/assets/work/tape/metallic-a.webp" alt="" aria-hidden="true" />
+          <img loading="lazy" decoding="async" className={`${styles.tape} ${styles.tapeStart}`} src="/assets/work/tape/metallic-a.webp" alt="" aria-hidden="true" />
+          <img loading="lazy" decoding="async" className={`${styles.tape} ${styles.tapeEnd}`} src="/assets/work/tape/metallic-a.webp" alt="" aria-hidden="true" />
         </>
       )}
     </figure>

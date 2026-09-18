@@ -66,11 +66,11 @@ export default function ContactSection({ id, index = '[05]' }: Props) {
 
           {/* Beside the headline, above the San Francisco address it belongs to */}
           <div className={styles.postcard} aria-hidden="true">
-            <img className={styles.photo} src={`${ASSETS}/golden-gate.webp`} alt="" />
-            <img className={styles.tape} src={`${ASSETS}/tape.webp`} alt="" />
-            <img className={styles.note} src={`${ASSETS}/san-francisco.webp`} alt="" />
+            <img loading="lazy" decoding="async" className={styles.photo} src={`${ASSETS}/golden-gate.webp`} alt="" />
+            <img loading="lazy" decoding="async" className={styles.tape} src={`${ASSETS}/tape.webp`} alt="" />
+            <img loading="lazy" decoding="async" className={styles.note} src={`${ASSETS}/san-francisco.webp`} alt="" />
             {/* The invitation, stuck under the postcard where the column would otherwise run empty */}
-            <img className={styles.briefNote} src="/assets/notes/great-stories.webp" alt="" />
+            <img loading="lazy" decoding="async" className={styles.briefNote} src="/assets/notes/great-stories.webp" alt="" />
           </div>
         </div>
 

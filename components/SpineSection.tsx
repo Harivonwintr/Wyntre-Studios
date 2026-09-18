@@ -137,7 +137,7 @@ const VERSIONS = [
 function DeliveryVisual() {
   return (
     <div className={styles.delivery} aria-hidden="true">
-      <img className={styles.tape} src="/assets/work/tape/metallic-b.webp" alt="" />
+      <img loading="lazy" decoding="async" className={styles.tape} src="/assets/work/tape/metallic-b.webp" alt="" />
       <ul className={styles.versions}>
         {VERSIONS.map((version) => (
           <li key={version.id} className={version.current ? styles.versionCurrent : undefined}>
@@ -149,7 +149,7 @@ function DeliveryVisual() {
         ))}
       </ul>
       {/* v03 is the final master, so of course someone wants to go back to it */}
-      <img className={styles.deliveryNote} src="/assets/notes/back-to-version-3.webp" alt="" />
+      <img loading="lazy" decoding="async" className={styles.deliveryNote} src="/assets/notes/back-to-version-3.webp" alt="" />
     </div>
   )
 }
@@ -239,7 +239,7 @@ export default function SpineSection() {
               <div className={styles.visual}>
                 {service.visual}
                 {service.note && !service.noteOnCard ? (
-                  <img
+                  <img loading="lazy" decoding="async"
                     className={`${styles.cardNote} ${styles[`note${service.name}`] ?? ''}`}
                     src={`/assets/notes/${service.note}.webp`}
                     alt=""
@@ -254,7 +254,7 @@ export default function SpineSection() {
               </div>
 
               {service.note && service.noteOnCard ? (
-                <img
+                <img loading="lazy" decoding="async"
                   className={`${styles.cardNote} ${styles[`note${service.name}`] ?? ''}`}
                   src={`/assets/notes/${service.note}.webp`}
                   alt=""

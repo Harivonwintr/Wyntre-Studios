@@ -121,7 +121,7 @@ export default function CollageCard({ work, index, hideCta = false }: Props) {
                       }}
                     />
                   </div>
-                  {piece.texture ? <img className={styles.texture} src={piece.shape} alt="" /> : null}
+                  {piece.texture ? <img loading="lazy" decoding="async" className={styles.texture} src={piece.shape} alt="" /> : null}
                 </div>
               )
             }
@@ -129,14 +129,14 @@ export default function CollageCard({ work, index, hideCta = false }: Props) {
             case 'paper':
               return (
                 <div key={i} className={`${styles.piece} ${styles.motion}`} style={boxStyle(piece, i)} {...flyProps(piece)}>
-                  <img className={styles.paper} src={piece.src} alt="" />
+                  <img loading="lazy" decoding="async" className={styles.paper} src={piece.src} alt="" />
                 </div>
               )
 
             case 'note':
               return (
                 <div key={i} className={`${styles.piece} ${styles.motion}`} style={boxStyle(piece, i)} {...flyProps(piece)}>
-                  <img className={styles.paper} src={piece.src} alt="" />
+                  <img loading="lazy" decoding="async" className={styles.paper} src={piece.src} alt="" />
                   <FitLines
                     as="ul"
                     lines={work.highlights}

@@ -21,18 +21,33 @@ export default function Hero() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // The load sequence waits for the page to finish hydrating, so the headline doesn't stutter under that work; the
-  // background film then starts once the headline has landed, so its decoding doesn't land mid-animation either
+  // The load sequence waits for the page to finish hydrating and for the headline font to be ready, so the headline
+  // neither stutters under that work nor rises in the fallback face and then jumps to Monument. Capped at 1.2s so a
+  // slow or missing font never holds the hero back. The background film starts once the headline has landed, so its
+  // decoding doesn't land mid-animation either.
   const [introReady, setIntroReady] = useState(false)
 
   useEffect(() => {
+    // Set once the sequence has started, or once the component has gone
+    let settled = false
+    let frame = 0
     let timer: ReturnType<typeof setTimeout> | undefined
-    const frame = requestAnimationFrame(() => {
-      setIntroReady(true)
-      timer = setTimeout(() => videoRef.current?.load(), 1500)
-    })
+
+    const play = () => {
+      if (settled) return
+      settled = true
+      frame = requestAnimationFrame(() => {
+        setIntroReady(true)
+        timer = setTimeout(() => videoRef.current?.load(), 1500)
+      })
+    }
+
+    document.fonts.load("800 1em 'Monument Extended Ultrabold Local'").then(play, play)
+    const cap = setTimeout(play, 1200)
 
     return () => {
+      settled = true
+      clearTimeout(cap)
       cancelAnimationFrame(frame)
       if (timer) clearTimeout(timer)
     }
@@ -59,8 +74,18 @@ export default function Hero() {
 
   return (
     <section id="hero" className={styles.hero} data-intro={introReady ? 'play' : undefined}>
-      <video ref={videoRef} className={styles.media} autoPlay loop muted playsInline preload="none">
-        <source src="/assets/Sizzle Reel.mp4" type="video/mp4" />
+      {/* 720p loop (about 3MB); the poster, its first frame, shows straight away so the hero is never blank */}
+      <video
+        ref={videoRef}
+        className={styles.media}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="none"
+        poster="/assets/hero-poster.jpg"
+      >
+        <source src="/assets/hero-loop.mp4" type="video/mp4" />
       </video>
       <div className={styles.shade} aria-hidden="true" />
 

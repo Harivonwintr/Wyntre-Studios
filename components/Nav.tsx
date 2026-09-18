@@ -193,7 +193,7 @@ export default function Nav() {
         <div className="nav-inner">
           <Link href="/" className="brand" onClick={handleHomeClick} scroll={false}>
             <Image
-              src={isCaseStudyPage ? "/assets/Brandmark dark.png" : "/assets/logo.svg"}
+              src={isCaseStudyPage ? "/assets/Brandmark dark.png" : "/assets/logo.webp"}
               alt="Wyntre" 
               className="brand-mark"
               width={100}

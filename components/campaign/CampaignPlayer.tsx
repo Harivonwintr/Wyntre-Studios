@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
-import Hls from 'hls.js'
+// Type only: the library itself (about 180KB) loads when a film opens, not with the page
+import type Hls from 'hls.js'
 import styles from './CampaignPlayer.module.css'
 
 type Props = {
@@ -63,6 +64,7 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
     if (!video) return
     const src = `https://videodelivery.net/${videoId}/manifest/video.m3u8`
     let hls: Hls | null = null
+    let cancelled = false
     // Index of the top rendition once the manifest lands; used again after every seek
     let topLevel = -1
     setReady(false)
@@ -85,39 +87,43 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
 
     // hls.js first wherever Media Source works: current Chrome also reports native HLS, but its built-in
     // player opens on the lowest rendition and ignores our quality settings. Native is for iOS Safari.
-    if (Hls.isSupported()) {
-      hls = new Hls({
-        // Fetch from the offset instead of loading the skipped head first
-        startPosition: startTime > 0 ? startTime : -1,
-        // hls.js assumes a 500 kbps connection until it has measured one, which opens every film on the
-        // 240p rendition for its first few seconds. Assume a fast link so the opening plays at full quality;
-        // it still steps down if the network genuinely can't keep up.
-        abrEwmaDefaultEstimate: 8_000_000,
-        // Otherwise hls.js deliberately loads the lowest rendition first to measure bandwidth
-        testBandwidth: false,
-        // Hold loading until the start level is chosen below; with auto-start it begins on the lowest rung
-        autoStartLoad: false,
-      })
-      // Levels are sorted by bitrate, so the last is the top rendition (1080p on Stream)
-      hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
-        if (!hls) return
-        topLevel = data.levels.length - 1
-        hls.startLevel = topLevel
-        hls.startLoad(startTime > 0 ? startTime : -1)
-      })
-      hls.on(Hls.Events.ERROR, (_event, data) => {
-        if (data.fatal) setError(true)
-      })
-      hls.on(Hls.Events.MANIFEST_PARSED, start)
-      hls.loadSource(src)
-      hls.attachMedia(video)
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = src
-      video.addEventListener('loadedmetadata', start, { once: true })
-    } else {
-      setError(true)
-      return
+    const attach = async () => {
+      const { default: Hls } = await import('hls.js')
+      if (cancelled) return
+      if (Hls.isSupported()) {
+        hls = new Hls({
+          // Fetch from the offset instead of loading the skipped head first
+          startPosition: startTime > 0 ? startTime : -1,
+          // hls.js assumes a 500 kbps connection until it has measured one, which opens every film on the
+          // 240p rendition for its first few seconds. Assume a fast link so the opening plays at full quality;
+          // it still steps down if the network genuinely can't keep up.
+          abrEwmaDefaultEstimate: 8_000_000,
+          // Otherwise hls.js deliberately loads the lowest rendition first to measure bandwidth
+          testBandwidth: false,
+          // Hold loading until the start level is chosen below; with auto-start it begins on the lowest rung
+          autoStartLoad: false,
+        })
+        // Levels are sorted by bitrate, so the last is the top rendition (1080p on Stream)
+        hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
+          if (!hls) return
+          topLevel = data.levels.length - 1
+          hls.startLevel = topLevel
+          hls.startLoad(startTime > 0 ? startTime : -1)
+        })
+        hls.on(Hls.Events.ERROR, (_event, data) => {
+          if (data.fatal) setError(true)
+        })
+        hls.on(Hls.Events.MANIFEST_PARSED, start)
+        hls.loadSource(src)
+        hls.attachMedia(video)
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src
+        video.addEventListener('loadedmetadata', start, { once: true })
+      } else {
+        setError(true)
+      }
     }
+    attach()
 
     // Safety net for either path, in case the event above has already fired
     video.addEventListener('canplay', start, { once: true })
@@ -130,6 +136,7 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
     video.addEventListener('seeking', onSeeking)
 
     return () => {
+      cancelled = true
       video.removeEventListener('loadedmetadata', start)
       video.removeEventListener('canplay', start)
       video.removeEventListener('seeking', onSeeking)

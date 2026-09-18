@@ -226,7 +226,7 @@ export default function ServiceDetails({ index = '[02]' }: Props) {
                   />
 
                   {/* The feedback every studio hears for this discipline */}
-                  <img
+                  <img loading="lazy" decoding="async"
                     className={styles.note}
                     data-lean={i % 2 ? 'left' : 'right'}
                     src={`/assets/notes/${service.note.src}.webp`}
