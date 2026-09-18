@@ -1,74 +1,110 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import styles from './Footer.module.css'
+
+// Fill in real URLs to show these links; entries without one are hidden rather than rendered as dead "#" links
+const socialLinks = [
+  { label: 'LinkedIn', href: '' },
+  { label: 'Instagram', href: '' },
+  { label: 'X', href: '' },
+  { label: 'YouTube', href: '' },
+].filter((link) => link.href)
+
+const legalLinks = [
+  { label: 'Terms', href: '' },
+  { label: 'Privacy', href: '' },
+].filter((link) => link.href)
+
+const EXPLORE = [
+  { label: 'Work', href: '/work' },
+  { label: 'Services', href: '/services' },
+  { label: 'Studio', href: '/studio' },
+  { label: 'Contact', href: '/contact' },
+]
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="footer">
-      <div className="footer-wrap">
-        <div className="footer-grid">
-          {/* Logo / Brand */}
-          <div className="footer-brand">
-            <Image 
-              src="/assets/logo.svg" 
-              alt="Wyntre Studios" 
-              className="footer-logo"
-              width={200}
-              height={200}
-            />
+    <footer className={styles.footer}>
+      <div className={styles.inner}>
+        <div className={styles.columns}>
+          <div className={styles.brand}>
+            <Link href="/" aria-label="Wyntre Studios home">
+              <Image src="/assets/logo.svg" alt="Wyntre Studios" width={120} height={120} className={styles.logo} />
+            </Link>
           </div>
 
-          {/* Explore */}
-          <nav className="footer-col" aria-labelledby="f-explore">
-            <h3 id="f-explore" className="footer-head">Explore</h3>
-            <ul>
-              <li><Link href="/work">Work</Link></li>
-              <li><Link href="/services">Services</Link></li>
-              <li><Link href="/studio">Studio</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
+          <nav aria-labelledby="footer-explore">
+            <h3 id="footer-explore" className={styles.label}>
+              <span className={styles.index}>[01]</span> Explore
+            </h3>
+            <ul className={styles.list}>
+              {EXPLORE.map((link) => (
+                <li key={link.label}>
+                  <Link href={link.href}>{link.label}</Link>
+                </li>
+              ))}
             </ul>
           </nav>
 
-          {/* Visit */}
-          <div className="footer-col" aria-labelledby="f-visit">
-            <h3 id="f-visit" className="footer-head">Visit</h3>
-            <address className="footer-address">
-              447 Broadway<br />
-              2nd Floor Suite #3012<br />
-              New York, New York<br />
-              10013<br />
+          <div>
+            <h3 className={styles.label}>
+              <span className={styles.index}>[02]</span> Location
+            </h3>
+            {/* City only: no street address on a public page */}
+            <address className={styles.address}>
+              San Francisco, CA
+              <br />
               United States
             </address>
           </div>
 
-          {/* Follow */}
-          <nav className="footer-col" aria-labelledby="f-follow">
-            <h3 id="f-follow" className="footer-head">Follow</h3>
-            <ul>
-              <li><a href="#" rel="noopener">Facebook</a></li>
-              <li><a href="#" rel="noopener">Twitter</a></li>
-              <li><a href="#" rel="noopener">Youtube</a></li>
-              <li><a href="#" rel="noopener">Instagram</a></li>
+          <div>
+            <h3 className={styles.label}>
+              <span className={styles.index}>[03]</span> Contact
+            </h3>
+            <ul className={styles.list}>
+              <li>
+                <a href="mailto:hari@wyntrestudios.com">hari@wyntrestudios.com</a>
+              </li>
+              <li>
+                <a href="tel:+16283060599">+1 (628) 306-0599</a>
+              </li>
+              {socialLinks.map((link) => (
+                <li key={link.label}>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
-          </nav>
+          </div>
 
-          {/* Legal */}
-          <nav className="footer-col" aria-labelledby="f-legal">
-            <h3 id="f-legal" className="footer-head">Legal</h3>
-            <ul>
-              <li><a href="#">Terms</a></li>
-              <li><a href="#">Privacy</a></li>
-            </ul>
-          </nav>
+          {legalLinks.length > 0 && (
+            <nav aria-labelledby="footer-legal">
+              <h3 id="footer-legal" className={styles.label}>
+                <span className={styles.index}>[04]</span> Legal
+              </h3>
+              <ul className={styles.list}>
+                {legalLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href}>{link.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
 
-        {/* Copyright */}
-        <div className="footer-meta">
-          © {currentYear} Wyntre Studios LLC. All Rights Reserved.
+        <div className={styles.meta}>
+          <span>© {currentYear} Wyntre Studios LLC. All rights reserved.</span>
+          <span>San Francisco, CA</span>
+          <a href="#top" className={styles.backToTop}>
+            Back to top ↑
+          </a>
         </div>
       </div>
     </footer>
   )
 }
-

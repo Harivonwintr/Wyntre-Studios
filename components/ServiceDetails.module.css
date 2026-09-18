@@ -1,0 +1,454 @@
+.section {
+  --svc-ink: #0d0d0d;
+  --svc-soft: rgba(13, 13, 13, 0.75);
+  --svc-faint: rgba(13, 13, 13, 0.45);
+  --svc-rule: rgba(13, 13, 13, 0.14);
+  --svc-mono: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  --svc-wide: 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+
+  padding-block: clamp(4rem, 7vw, 7rem);
+  padding-inline: clamp(16px, 4vw, 64px);
+  background: #fff;
+  color: var(--svc-ink);
+  /* clip, not hidden, so the sticky index keeps working */
+  overflow-x: clip;
+}
+
+.inner {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(12.5rem, 0.22fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.5rem, 3.5vw, 4rem);
+}
+
+/* ---------- Sticky index ---------- */
+.index {
+  position: sticky;
+  top: clamp(1.5rem, 12vh, 7rem);
+  min-width: 0;
+}
+
+.indexList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--svc-rule);
+}
+
+.indexLink {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.25rem;
+  padding: 0.85rem 0 0.85rem 1.1rem;
+  color: rgba(13, 13, 13, 0.36);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+/* Marker on the index rule, drawn in for the current discipline */
+.indexLink::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  width: 2px;
+  background: var(--svc-ink);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.35s var(--ease-settle, ease);
+}
+
+.indexLink:hover,
+.indexLink[aria-current='true'] {
+  color: var(--svc-ink);
+}
+
+.indexLink[aria-current='true']::before {
+  transform: scaleY(1);
+}
+
+.indexLink:focus-visible {
+  outline: 2px solid var(--accent-blue, #0066ff);
+  outline-offset: 2px;
+}
+
+.indexNumber {
+  font: 500 11px/1 var(--svc-mono);
+  letter-spacing: 0.08em;
+}
+
+.indexName {
+  font: 800 clamp(0.9rem, 1.1vw, 1.1rem) / 1.2 var(--svc-wide);
+  text-transform: uppercase;
+}
+
+/* ---------- Disciplines ---------- */
+.items {
+  min-width: 0;
+}
+
+.item {
+  scroll-margin-top: 100px;
+}
+
+.item + .item {
+  margin-top: clamp(4.5rem, 9vw, 8rem);
+  padding-top: clamp(3rem, 5vw, 4.5rem);
+  border-top: 1px solid var(--svc-rule);
+}
+
+/* Copy and frame on the left, task list on the right beside the frame */
+.item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 0.3fr);
+  align-items: start;
+  column-gap: clamp(1.75rem, 3vw, 3.25rem);
+  row-gap: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.head,
+.frame {
+  grid-column: 1;
+  min-width: 0;
+}
+
+/* Starts level with the top of the frame, beside the picture rather than the title */
+.side {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+
+/* ---------- Frame ---------- */
+.frame {
+  position: relative;
+}
+
+/* Grey mount holding the strip, the labels and the still together as one object */
+.board {
+  position: relative;
+  z-index: 1;
+  padding: 0.9rem 0.9rem 0.75rem;
+  background: #232325;
+}
+
+/* One strip, scaled to the mount's height and sitting behind the whole card — never tiled */
+.filmEdge {
+  position: absolute;
+  left: -2.5rem;
+  top: -1.1rem;
+  bottom: -1.1rem;
+  z-index: 0;
+  aspect-ratio: 420 / 1632;
+  background-image: var(--film-edge, url('/assets/services/film-edge.webp'));
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.boardHead,
+.boardFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  font: 500 10px/1 var(--svc-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(244, 241, 234, 0.5);
+}
+
+.boardHead {
+  padding-bottom: 0.7rem;
+}
+
+.boardFoot {
+  justify-content: flex-start;
+  padding-top: 0.7rem;
+}
+
+.boardTimecode {
+  font-variant-numeric: tabular-nums;
+  color: #f4f1ea;
+}
+
+.boardRule {
+  flex: 1;
+  height: 1px;
+  background: rgba(244, 241, 234, 0.2);
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #161616;
+}
+
+.cover {
+  object-fit: cover;
+}
+
+/* Short, fat masking tape slapped across the film strip, clear of the credit line along the top.
+   Each scan has its own proportions, so the angle and width are set per piece rather than shared. */
+.tape {
+  position: absolute;
+  z-index: 2;
+  top: 24%;
+  /* Centred on the card's left edge, so every piece straddles the strip and the card */
+  left: 0;
+  translate: -50% 0;
+  width: clamp(108px, 12vw, 165px);
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+/* Each scan holds the tape at its own angle (-18.7deg, -87deg, +1.6deg, -24.5deg measured off the
+   artwork), so the rotation below is what stands that piece upright, give or take a couple of degrees. */
+.tape[data-tape='tape-a'] {
+  width: clamp(130px, 14vw, 195px);
+  rotate: -74deg;
+}
+
+.tape[data-tape='tape-b'] {
+  /* The one scan that is already upright, so its width is its true width — keep it modest */
+  width: clamp(62px, 6.8vw, 92px);
+  rotate: -3deg;
+}
+
+.tape[data-tape='tape-c'] {
+  /* The thinnest scan of the four: 15% down from where it read too big */
+  width: clamp(157px, 16.2vw, 234px);
+  rotate: 86deg;
+}
+
+.tape[data-tape='tape-d'] {
+  width: clamp(169px, 18.1vw, 250px);
+  rotate: -69deg;
+}
+
+/* More disciplines than scans, so the repeat is mirrored. Scale applies inside the element's own axes,
+   before the rotation, so the mirrored piece needs the opposite lean to stand upright. */
+.tape[data-flip] {
+  scale: -1 1;
+  rotate: 77deg;
+}
+
+/* Handwritten client note stuck over the bottom-right corner of the still */
+.note {
+  position: absolute;
+  z-index: 2;
+  right: -2.5%;
+  bottom: -10%;
+  width: min(210px, 27%);
+  height: auto;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.2));
+  pointer-events: none;
+}
+
+.note[data-lean='right'] {
+  rotate: 3deg;
+}
+
+.note[data-lean='left'] {
+  rotate: -3.5deg;
+}
+
+/* ---------- Side column ---------- */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin: 0;
+  font: 500 12px/1 var(--svc-mono);
+  letter-spacing: 0.1em;
+  color: var(--svc-faint);
+}
+
+.metaCurrent {
+  color: var(--svc-ink);
+}
+
+.metaRule {
+  width: 2.25rem;
+  height: 1px;
+  background: var(--svc-faint);
+}
+
+.credit {
+  margin-left: auto;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* FitLines sets the size; the cap keeps it sane on very short words */
+.name {
+  margin: 1.25rem 0 0;
+  /* One size for all five cards; the cap keeps the longest label on a single line */
+  font: 800 clamp(1.6rem, 4.4vw, 2.85rem) / 0.95 var(--svc-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Too narrow for "Toolkits & rollouts" on one line, so let the long ones wrap instead of shrinking the set */
+@media (max-width: 700px) {
+  .name {
+    white-space: normal;
+  }
+}
+
+.tasksLabel {
+  margin: 0 0 0.25rem;
+  font: 700 11px/1 var(--svc-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.tasks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tasks li {
+  padding-block: 0.75rem;
+  border-bottom: 1px solid var(--svc-rule);
+  font: 400 clamp(0.9rem, 0.95vw, 1rem) / 1.4 var(--font-inter), system-ui, sans-serif;
+}
+
+/* Solid rectangle, mono caps — the one boxed button on the site */
+.ctaBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 1.75rem;
+  padding: 1.05rem 1.15rem;
+  background: var(--svc-ink);
+  color: #f4f1ea;
+  font: 500 11px/1 var(--svc-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: inset 0 0 0 1px var(--svc-ink);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.ctaBox:hover,
+.ctaBox:focus-visible {
+  background: transparent;
+  color: var(--svc-ink);
+}
+
+.ctaBox svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .head,
+  .frame,
+  .side {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .side {
+    margin-top: 2.5rem;
+  }
+}
+
+@media (max-width: 620px) {
+  /* The note would cover the picture at this width */
+  .note {
+    position: static;
+    display: block;
+    width: min(200px, 60%);
+    margin: 1.25rem 0 0 auto;
+  }
+
+  .tape {
+    top: 18%;
+    left: -2.2rem;
+  }
+}
+
+/* The index becomes a sticky, swipeable tab row above the content */
+@media (max-width: 900px) {
+  /* minmax(0, 1fr) so the tab row scrolls inside the screen instead of widening the column */
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .index {
+    top: 0;
+    z-index: 5;
+    margin-inline: calc(-1 * clamp(16px, 4vw, 64px));
+    padding-inline: clamp(16px, 4vw, 64px);
+    background: #fff;
+    border-bottom: 1px solid var(--svc-rule);
+  }
+
+  .indexList {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    border-left: 0;
+    scrollbar-width: none;
+  }
+
+  .indexList::-webkit-scrollbar {
+    display: none;
+  }
+
+  .indexLink {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    white-space: nowrap;
+  }
+
+  .indexLink::before {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    width: auto;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .indexLink[aria-current='true']::before {
+    transform: scaleX(1);
+  }
+
+  .item {
+    scroll-margin-top: 70px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indexLink,
+  .indexLink::before {
+    transition: none;
+  }
+}

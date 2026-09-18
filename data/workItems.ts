@@ -8,7 +8,6 @@ export interface WorkItem {
   markets: string[];
   delivery: string;
   challenge: string;
-  videoUrl: string;
   posterUrl: string;
   slug: string;
 }
@@ -24,7 +23,6 @@ export const workItems: WorkItem[] = [
     markets: ["Global", "25+ Markets"],
     delivery: "10,000+ Assets",
     challenge: "Managing high-volume versioning across multiple markets while maintaining brand consistency and quality standards.",
-    videoUrl: "https://example.com/videos/nivea-campaign.mp4",
     posterUrl: "/assets/case1.png",
     slug: "nivea-global-campaign-infrastructure"
   },
@@ -38,7 +36,6 @@ export const workItems: WorkItem[] = [
     markets: ["Global"],
     delivery: "High-quality Product Assets",
     challenge: "Creating photorealistic product textures and visualizations across multiple product lines.",
-    videoUrl: "https://example.com/videos/nestle-product-textures.mp4",
     posterUrl: "/assets/case2.png",
     slug: "nestle-product-textures"
   },
@@ -52,7 +49,6 @@ export const workItems: WorkItem[] = [
     markets: ["Multiple Markets"],
     delivery: "Campaign Assets",
     challenge: "Delivering a high-impact campaign with quick turnaround times.",
-    videoUrl: "https://example.com/videos/nivea-checkmate-1.mp4",
     posterUrl: "/assets/campaign1.png",
     slug: "nivea-black-white-checkmate-1"
   },
@@ -66,7 +62,6 @@ export const workItems: WorkItem[] = [
     markets: ["Europe"],
     delivery: "TV Commercial",
     challenge: "Delivering a high-impact campaign with quick turnaround times.",
-    videoUrl: "https://example.com/videos/nivea-checkmate-2.mp4",
     posterUrl: "/assets/campaign2.png",
     slug: "nivea-q10-dual-action-serum"
   },
@@ -80,7 +75,6 @@ export const workItems: WorkItem[] = [
     markets: ["Europe"],
     delivery: "Digital Ads",
     challenge: "Delivering a high-impact campaign with quick turnaround times.",
-    videoUrl: "https://example.com/videos/nivea-checkmate-3.mp4",
     posterUrl: "/assets/campaign3.png",
     slug: "nivea-body-milk"
   },
@@ -94,7 +88,6 @@ export const workItems: WorkItem[] = [
     markets: ["Europe"],
     delivery: "Social Media Content",
     challenge: "Delivering a high-impact campaign with quick turnaround times.",
-    videoUrl: "https://example.com/videos/nivea-checkmate-4.mp4",
     posterUrl: "/assets/campaign4.png",
     slug: "nivea-men-black-white-real-madrid"
   },
@@ -108,7 +101,6 @@ export const workItems: WorkItem[] = [
     markets: ["APAC", "Americas"],
     delivery: "Regional Campaign Assets",
     challenge: "Delivering a high-impact campaign with quick turnaround times.",
-    videoUrl: "https://example.com/videos/nivea-checkmate-5.mp4",
     posterUrl: "/assets/campaign5.png",
     slug: "nivea-radiant-beauty"
   },
@@ -122,7 +114,6 @@ export const workItems: WorkItem[] = [
     markets: ["Global"],
     delivery: "Extended Format Content",
     challenge: "Delivering a high-impact campaign with quick turnaround times.",
-    videoUrl: "https://example.com/videos/nivea-checkmate-6.mp4",
     posterUrl: "/assets/campaign6.png",
     slug: "nivea-micellar-water"
   }

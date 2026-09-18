@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { WorkItem } from '@/data/workItems'
@@ -13,7 +13,6 @@ interface WorkGridProps {
 }
 
 export default function WorkGrid({ items, showCaseStudies, showCampaignRange, onItemClick }: WorkGridProps) {
-  const router = useRouter()
   const pathname = usePathname()
 
   // Map case study slugs to their routes
@@ -87,6 +86,15 @@ export default function WorkGrid({ items, showCaseStudies, showCampaignRange, on
               data-tilt="3"
               data-scale="1.02"
               onClick={() => onItemClick?.(item)}
+              onKeyDown={(e) => {
+                if (onItemClick && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault()
+                  onItemClick(item)
+                }
+              }}
+              role={onItemClick ? 'button' : undefined}
+              tabIndex={onItemClick ? 0 : undefined}
+              aria-label={onItemClick ? `View ${item.client} ${item.campaign}` : undefined}
               style={{ cursor: onItemClick ? 'pointer' : 'default' }}
             >
               <Image

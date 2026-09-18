@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [],
     unoptimized: false,
+    // Live posters pulled from Cloudflare Stream
+    remotePatterns: [{ protocol: 'https', hostname: 'videodelivery.net', pathname: '/**' }],
   },
 }
 

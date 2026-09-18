@@ -1,93 +1,110 @@
-.btn{
+/* The site's one call-to-action style: an underlined text link; the Monument headlines carry the emphasis */
+.btn {
+  --btn-ink: #0d0d0d;
   position: relative;
-  height: 56px;
-  padding: 0 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0 0.55rem;
   border: 0;
-  background: transparent;
-  cursor: pointer;
-  display: inline-grid;
-  place-items: center;
-
-  transform: scale(1);
-  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-  will-change: transform;
+  background: none;
+  color: var(--btn-ink);
+  font: 600 clamp(0.95rem, 1vw, 1.05rem) / 1.2 var(--font-inter), system-ui, sans-serif;
+  letter-spacing: 0;
   text-decoration: none;
-  
-  /* CSS variables for color variants */
-  --btn-color: #000;
-  --btn-outline-color: rgba(0,0,0,0.35);
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.btn[data-variant="white"] {
-  --btn-color: #fff;
-  --btn-outline-color: rgba(255,255,255,0.35);
+.btn[data-variant='white'] {
+  --btn-ink: #f4f1ea;
 }
 
-.label{
-  position: relative;
-  z-index: 2;
-  font-family: 'Monument Extended Regular', 'Inter', Arial, sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--btn-color);
-  font-size: 14px;
-  line-height: 1;
-}
-
-.outline{
+/* 1px rule under the whole link; on hover it sweeps off toward the icon and redraws from the left */
+.btn::after {
+  content: '';
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform-origin: right;
 }
 
-.rect{
-  fill: none;
-  stroke: var(--btn-color);
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 0.6s ease;
+.btn:hover::after {
+  animation: sweep 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.btn:hover{
-  transform: scale(1.04);
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.btn:hover .rect{
-  stroke-dashoffset: 0;
+.icon {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.btn:focus-visible{
-  outline: 2px solid var(--btn-outline-color);
-  outline-offset: 4px;
-  border-radius: 999px;
+.icon[data-icon='play'] {
+  width: 0.85em;
+  height: 0.85em;
 }
 
-/* Disable hover animations on mobile and tablet */
-@media (max-width: 1024px) {
-  .btn:hover {
-    transform: none !important;
+.btn:hover .icon[data-icon='arrow'] {
+  transform: translate(3px, -3px);
+}
+
+.btn:hover .icon[data-icon='play'] {
+  transform: translateX(3px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent-blue, #0066ff);
+  outline-offset: 6px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:disabled::after {
+  animation: none;
+}
+
+.btn:disabled .icon {
+  transform: none;
+}
+
+@keyframes sweep {
+  0% {
+    transform: scaleX(1);
+    transform-origin: right;
   }
-  
-  .btn:hover .rect {
-    stroke-dashoffset: 1 !important;
+  50% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  50.1% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 }
 
-@media (max-width: 768px) {
-  .btn {
-    min-height: 48px;
-    padding: 0 24px;
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover::after {
+    animation: none;
   }
 
-  .label {
-    font-size: 13px;
-    letter-spacing: 0.1em;
+  .icon {
+    transition: none;
   }
 }

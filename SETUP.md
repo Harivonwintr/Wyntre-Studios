@@ -48,22 +48,17 @@ public/
 
 1. Copy your entire `assets/` folder to `public/assets/` in the Next.js project
 2. Ensure all image paths match (case-sensitive)
-3. Update video URLs in `data/workItems.ts` with actual video URLs
+3. Set Cloudflare Stream video IDs in `data/caseStudyItems.ts` with actual video URLs
 
 ## Video URLs
 
-Update the `videoUrl` field in `data/workItems.ts` with your actual video URLs. These can be:
-- Direct MP4 URLs
-- YouTube/Vimeo embed URLs
-- Any video hosting service URLs
-
-The modal will handle HTML5 video playback or you can extend it to support embeds.
+Campaign videos are hosted on Cloudflare Stream. Set the `streamVideoId` field for each campaign in `data/caseStudyItems.ts`; the modal shows a play button only for campaigns with a valid ID.
 
 ## Running the Project
 
 1. Install dependencies: `npm install`
 2. Copy assets to `public/assets/`
-3. Update video URLs in `data/workItems.ts`
+3. Set Cloudflare Stream video IDs in `data/caseStudyItems.ts`
 4. Run dev server: `npm run dev`
 5. Open http://localhost:3000
 

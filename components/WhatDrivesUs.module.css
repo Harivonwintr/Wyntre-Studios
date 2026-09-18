@@ -1,0 +1,338 @@
+.section {
+  --drives-ink: #0d0d0d;
+  --drives-soft: rgba(13, 13, 13, 0.78);
+  --drives-faint: rgba(13, 13, 13, 0.55);
+  --drives-rule: rgba(13, 13, 13, 0.7);
+  --drives-blue: var(--accent-blue, #0066ff);
+  --drives-display: var(--font-anton), 'Anton', Impact, 'Arial Narrow', sans-serif;
+  --drives-wide: 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  --drives-mono: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  --drives-sans: var(--font-inter), system-ui, sans-serif;
+
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(4rem, 7vw, 7rem);
+  /* The collage hangs lower than the copy, so a full bottom pad reads as dead space */
+  padding-bottom: clamp(2rem, 3vw, 3.5rem);
+  padding-inline: clamp(16px, 4vw, 64px);
+  background: #fff;
+  color: var(--drives-ink);
+  overflow: hidden;
+}
+
+.inner {
+  position: relative;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ---------- Small labels ---------- */
+.micro {
+  margin: 0;
+  font: 400 10px/1.7 var(--drives-mono);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--drives-faint);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Main grid ---------- */
+/* Collage on the left, copy on the right, so the page alternates sides with the sections around it */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2.5rem, 5vw, 6rem);
+}
+
+.grid > .artwork {
+  order: -1;
+}
+
+/* Type only: headline and intro across the top, the points in one row beneath */
+.grid[data-bare] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1101px) {
+
+  .grid[data-bare] .points {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Centred type-only layout: everything on the page's centre line */
+.grid[data-centered] .copy {
+  align-items: center;
+  text-align: center;
+}
+
+/* Centring the column shrinks its children, and the fitted headline would measure that narrower box */
+.grid[data-centered] .headline {
+  width: 100%;
+}
+
+.grid[data-centered] .intro {
+  margin-inline: auto;
+}
+
+.grid[data-centered] .copyBody {
+  width: 100%;
+}
+
+.grid[data-centered] .pointNumber {
+  justify-content: center;
+}
+
+/* A rule either side keeps the number on the centre line */
+.grid[data-centered] .pointNumber::before {
+  content: '';
+  width: 2.25rem;
+  height: 1px;
+  background: var(--drives-rule);
+}
+
+.grid[data-centered] .pointBody {
+  margin-inline: auto;
+}
+
+.grid[data-centered] .cta {
+  display: flex;
+  justify-content: center;
+}
+
+/* Headline above the points, centred vertically beside the collage */
+.copy {
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* The argument that leads the headline into the points */
+.intro {
+  max-width: 52ch;
+  margin-top: clamp(1.75rem, 2.8vw, 2.5rem);
+}
+
+.intro p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.introStatement {
+  font: 600 clamp(1.05rem, 1.25vw, 1.3rem) / 1.4 var(--drives-sans);
+  color: var(--drives-ink);
+}
+
+.intro .introBody {
+  margin-top: 0.6rem;
+  font: 400 1rem/1.65 var(--drives-sans);
+  color: var(--drives-soft);
+}
+
+/* Points with the Learn More brush button underneath */
+.copyBody {
+  min-width: 0;
+  margin-top: clamp(3.5rem, 6vw, 6rem);
+}
+
+/* With an intro above them, the points follow on a little closer */
+.intro + .copyBody {
+  margin-top: clamp(2.5rem, 4vw, 4rem);
+}
+
+.cta {
+  margin-top: clamp(2rem, 3.5vw, 3.5rem);
+}
+
+
+/* Brush stroke sits just under the words */
+.headline {
+  --underline-offset: 0.15em;
+}
+
+/* ---------- Numbered points ---------- */
+.points {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 3.5vw, 3.5rem) clamp(1.5rem, 4vw, 4.5rem);
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.point {
+  min-width: 0;
+}
+
+.pointNumber {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font: 500 11px/1 var(--drives-mono);
+  letter-spacing: 0.1em;
+}
+
+.pointNumber::after {
+  content: '';
+  width: 2.25rem;
+  height: 1px;
+  background: var(--drives-rule);
+}
+
+.pointTitle {
+  margin: 0.9rem 0 0.5rem;
+  /* Inter bold, one step up from the body: the Monument headline above already carries the display type */
+  font: 700 clamp(1.05rem, 1.2vw, 1.25rem) / 1.25 var(--drives-sans);
+  letter-spacing: -0.01em;
+  color: var(--drives-ink);
+}
+
+.pointBody {
+  margin: 0;
+  max-width: 32ch;
+  font-family: var(--drives-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--drives-soft);
+}
+
+/* ---------- Artwork ---------- */
+/* The collage sets the row height; the copy stretches to match, so the sideways headline runs the collage's full
+   height and nothing overhangs into the next section */
+.artwork {
+  position: relative;
+  min-width: 0;
+}
+
+/* Collage runs wider than its column so the board fills the space beside the points */
+@media (min-width: 1101px) {
+  .artwork {
+    width: 110%;
+    margin-inline: -5%;
+    /* Sits a little high against the headline rather than centring on the points */
+    margin-block-start: clamp(-2.5rem, -2vw, -1rem);
+  }
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  aspect-ratio: 635 / 700;
+  border: 1.5px dashed rgba(13, 13, 13, 0.35);
+  background: rgba(255, 255, 255, 0.35);
+  font: 500 12px/1.4 var(--drives-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--drives-faint);
+}
+
+.placeholderHint {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+}
+
+/* ---------- Commitment ---------- */
+.commitment {
+  display: grid;
+  grid-template-columns: minmax(2rem, 1fr) auto minmax(2rem, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  /* Clears the collage, which overhangs the grid below */
+  margin: clamp(3rem, 10vw, 9rem) 0 0;
+}
+
+.commitmentRule {
+  height: 1px;
+  background: var(--drives-rule);
+}
+
+.commitmentText {
+  font-family: var(--drives-wide);
+  font-weight: 800;
+  font-size: clamp(1.1rem, 2vw, 2.25rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 2rem;
+  margin-top: clamp(2rem, 3vw, 3rem);
+}
+
+.footer > .micro {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5rem;
+}
+
+.slashes {
+  color: var(--drives-ink);
+}
+
+.footerEnd {
+  justify-self: end;
+  align-items: center !important;
+}
+
+.dash {
+  width: 2rem;
+  height: 1px;
+  background: var(--drives-rule);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Copy first when stacked */
+  .grid > .artwork {
+    order: 0;
+    max-width: 640px;
+    margin-block: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .points {
+    grid-template-columns: 1fr;
+  }
+
+  .commitment {
+    grid-template-columns: 1fr;
+  }
+
+  .commitmentRule,
+  .footer > .micro {
+    display: none;
+  }
+
+  .commitmentText {
+    white-space: normal;
+  }
+
+  .footer {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}

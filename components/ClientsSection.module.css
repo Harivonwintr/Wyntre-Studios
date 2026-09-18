@@ -1,0 +1,119 @@
+/* A slim credibility band, held to the same width as the rest of the content */
+.section {
+  --clients-ink: #f4f1ea;
+  --clients-gutter: clamp(16px, 4vw, 64px);
+
+  padding-block: clamp(3rem, 5vw, 4.5rem);
+  background: #0d0d0d;
+  color: var(--clients-ink);
+  overflow: hidden;
+}
+
+.inner {
+  max-width: calc(1600px + 2 * var(--clients-gutter));
+  margin: 0 auto;
+  padding-inline: var(--clients-gutter);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Element-qualified so it wins over the slate's own margin regardless of stylesheet order */
+div.slate {
+  margin-bottom: clamp(1.5rem, 2.5vw, 2.25rem);
+}
+
+.aside {
+  opacity: 0.45;
+  white-space: nowrap;
+}
+
+/* ---------- Marquee ---------- */
+.marquee {
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* Logos fade in and out at the container edges rather than the screen edges */
+.row {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* Identical sets side by side; sliding by half the track loops seamlessly */
+.track {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
+}
+
+.reverse {
+  animation-direction: reverse;
+  animation-duration: 54s;
+}
+
+.set {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  place-items: center;
+  width: 132px;
+  height: 56px;
+}
+
+/* The logo files are made for dark backgrounds, so they're only greyed */
+.logo {
+  width: auto;
+  height: auto;
+  max-width: 120px;
+  max-height: 48px;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0.85);
+  opacity: 0.75;
+  transition: filter 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.item:hover .logo {
+  filter: none;
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 560px) {
+  .aside {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+
+  .logo {
+    transition: none;
+  }
+}

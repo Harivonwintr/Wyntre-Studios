@@ -1,103 +1,60 @@
-"use client";
+import Link from 'next/link'
+import type { ReactNode } from 'react'
+import styles from './OutlineButton.module.css'
 
-import { useLayoutEffect, useRef, useState } from "react";
-import Link from "next/link";
-import styles from "./OutlineButton.module.css";
-
-interface OutlineButtonProps {
-  children?: React.ReactNode;
-  href?: string;
-  onClick?: () => void;
-  type?: "button" | "submit" | "reset";
-  variant?: "black" | "white";
+type Props = {
+  children?: ReactNode
+  href?: string
+  onClick?: () => void
+  type?: 'button' | 'submit' | 'reset'
+  /** 'white' for dark backgrounds */
+  variant?: 'black' | 'white'
+  disabled?: boolean
+  /** Icon after the label: ↗ for links, ▶ for video, or none */
+  icon?: 'arrow' | 'play' | 'none'
+  className?: string
 }
 
-export default function OutlineButton({ 
-  children = "LEARN MORE",
+const ICONS = {
+  arrow: <path d="M7 17L17 7M8.5 7H17v8.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="square" />,
+  play: <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />,
+}
+
+/** The site's call-to-action: an underlined text link with an icon that nudges on hover */
+export default function OutlineButton({
+  children = 'Learn more',
   href,
   onClick,
-  type = "button",
-  variant = "black"
-}: OutlineButtonProps) {
-  const btnRef = useRef<HTMLButtonElement | null>(null);
-  const linkRef = useRef<HTMLAnchorElement | null>(null);
-  const [box, setBox] = useState({ w: 0, h: 0 });
-
-  const elementRef = href ? linkRef : btnRef;
-
-  useLayoutEffect(() => {
-    const el = elementRef.current;
-    if (!el) return;
-
-    const update = () => {
-      const w = Math.round(el.clientWidth);
-      const h = Math.round(el.clientHeight);
-      if (w && h) setBox({ w, h });
-    };
-
-    update();
-
-    const ro = new ResizeObserver(() => update());
-    ro.observe(el);
-
-    return () => ro.disconnect();
-  }, [elementRef]);
-
-  const stroke = 2; // px
-  const w = box.w || 220; // fallback
-  const h = box.h || 56;  // fallback
-
-  // Pill radius must be half the height (minus stroke inset)
-  const r = Math.max(0, (h - stroke * 2) / 2);
-
-  const buttonContent = (
+  type = 'button',
+  variant = 'black',
+  disabled,
+  icon = 'arrow',
+  className,
+}: Props) {
+  const content = (
     <>
       <span className={styles.label}>{children}</span>
-      <svg
-        className={styles.outline}
-        viewBox={`0 0 ${w} ${h}`}
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <rect
-          className={styles.rect}
-          x={stroke}
-          y={stroke}
-          width={w - stroke * 2}
-          height={h - stroke * 2}
-          rx={r}
-          ry={r}
-          pathLength={1}
-        />
-      </svg>
+      {icon !== 'none' ? (
+        <svg className={styles.icon} data-icon={icon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          {ICONS[icon]}
+        </svg>
+      ) : null}
     </>
-  );
+  )
 
-  const commonProps = {
-    className: styles.btn,
-    'data-variant': variant === "white" ? "white" : undefined
-  } as const;
+  const shared = { className: `${styles.btn} ${className ?? ''}`, 'data-variant': variant }
 
   if (href) {
     return (
-      <Link 
-        ref={linkRef as React.Ref<HTMLAnchorElement>} 
-        href={href} 
-        {...commonProps}
-      >
-        {buttonContent}
+      <Link href={href} onClick={onClick} {...shared}>
+        {content}
       </Link>
-    );
+    )
   }
 
   return (
-    <button 
-      ref={btnRef} 
-      {...commonProps}
-      type={type} 
-      onClick={onClick}
-    >
-      {buttonContent}
+    <button type={type} onClick={onClick} disabled={disabled} {...shared}>
+      {content}
     </button>
-  );
+  )
 }

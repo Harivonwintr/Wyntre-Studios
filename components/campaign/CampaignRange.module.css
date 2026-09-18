@@ -1,0 +1,458 @@
+.section {
+  --range-ink: #f4f1ea;
+  --range-soft: rgba(244, 241, 234, 0.72);
+  --range-faint: rgba(244, 241, 234, 0.45);
+  --range-rule: rgba(244, 241, 234, 0.14);
+  --range-mono: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  --range-gutter: clamp(16px, 4vw, 64px);
+
+  position: relative;
+  padding-block: clamp(3.5rem, 6vw, 5.5rem);
+  background: #0d0d0d;
+  color: var(--range-ink);
+  overflow: hidden;
+}
+
+/* The scroll space ScrollTrigger adds around the pinned band would otherwise show the page's navy background */
+:global(.pin-spacer):has(> .section) {
+  background: #0d0d0d;
+}
+
+.inner {
+  width: 100%;
+  max-width: calc(1600px + 2 * var(--range-gutter));
+  margin: 0 auto;
+  padding-inline: var(--range-gutter);
+}
+
+/* ---------- Header ---------- */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  /* Heading centred against the statement, copy and button, the same as the Our Work header */
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem clamp(1.5rem, 4vw, 4rem);
+  margin-bottom: clamp(2rem, 4vh, 3rem);
+}
+
+.heading {
+  margin: 0;
+  font: 800 clamp(2.25rem, 5vw, 5.25rem) / 0.92 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  text-transform: uppercase;
+}
+
+.headerCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 36ch;
+}
+
+/* The column gaps its children by 1.25rem; the statement sits tight to the line it introduces */
+.statement + .description {
+  margin-top: -0.75rem;
+}
+
+/* Bold opening line, the same pattern as the Our Work header above */
+.statement {
+  margin: 0;
+  font: 600 clamp(1.05rem, 1.15vw, 1.2rem) / 1.4 var(--font-inter), system-ui, sans-serif;
+  color: var(--range-ink);
+}
+
+.description {
+  margin: 0;
+  /* Keeps a lone word (like the closing "cheap.") from being stranded on the last line */
+  text-wrap: pretty;
+  font: 400 clamp(0.9rem, 0.95vw, 1rem) / 1.6 var(--font-inter), system-ui, sans-serif;
+  color: var(--range-soft);
+}
+
+/* ---------- Strip ---------- */
+.viewport {
+  position: relative;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Grab cursor for mouse users; frames ignore hover and clicks mid-drag */
+@media (hover: hover) and (pointer: fine) {
+  .viewport {
+    cursor: grab;
+  }
+
+  .section[data-dragging] .viewport {
+    cursor: grabbing;
+  }
+}
+
+.section[data-dragging] .frame {
+  pointer-events: none;
+}
+
+.track {
+  --frame-w: clamp(17rem, 28vw, 30rem);
+  position: relative;
+  display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  width: max-content;
+  margin: 0;
+  /* First frame lines up with the header; the ends clear the edges on ultra-wide screens */
+  padding: 34px max(var(--range-gutter), calc((100vw - 1600px) / 2)) 34px;
+  list-style: none;
+  will-change: transform;
+}
+
+/* Sprocket holes along both edges. Pinned: drawn across the full band and shifted by --strip-x as the strip
+   slides, so they never run out. Swipe fallback: drawn on the track so they scroll with the frames. */
+.section[data-pinned] .viewport::before,
+.section[data-pinned] .viewport::after,
+.section:not([data-pinned]) .track::before,
+.section:not([data-pinned]) .track::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: 12px;
+  background-image: linear-gradient(90deg, rgba(244, 241, 234, 0.16) 0 12px, transparent 12px);
+  background-size: 30px 12px;
+  background-repeat: repeat-x;
+  pointer-events: none;
+}
+
+.section[data-pinned] .viewport::before,
+.section[data-pinned] .viewport::after {
+  background-position-x: var(--strip-x, 0px);
+}
+
+.section[data-pinned] .viewport::before,
+.section:not([data-pinned]) .track::before {
+  top: 8px;
+}
+
+.section[data-pinned] .viewport::after,
+.section:not([data-pinned]) .track::after {
+  bottom: 8px;
+}
+
+.item {
+  flex: 0 0 var(--frame-w);
+  min-width: 0;
+}
+
+/* ---------- Grid layout (work page library) ---------- */
+/* Format and brand rows share one chip style; a mono label names each row */
+.filterBar {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.filterLabel {
+  font: 500 10px/1 var(--range-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--range-faint);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.95rem;
+  border: 1px solid var(--range-rule);
+  background: transparent;
+  color: var(--range-soft);
+  font: 500 11px/1 var(--range-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.filter:hover {
+  border-color: rgba(244, 241, 234, 0.45);
+  color: var(--range-ink);
+}
+
+.filter[aria-pressed='true'] {
+  border-color: var(--range-ink);
+  background: var(--range-ink);
+  color: #0d0d0d;
+}
+
+.filter:focus-visible {
+  outline: 2px solid var(--accent-blue, #0066ff);
+  outline-offset: 3px;
+}
+
+.filterCount {
+  opacity: 0.55;
+  letter-spacing: 0.08em;
+}
+
+/* No films for this combination */
+.filter:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.filter:disabled:hover {
+  border-color: var(--range-rule);
+  color: var(--range-soft);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.75rem, 2.5vw, 2.5rem) clamp(1rem, 1.6vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gridItem {
+  min-width: 0;
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Label sits above its chips on a phone */
+  .filterRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+.frame {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 0;
+  background: #161616;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.6s var(--ease-settle, ease),
+    opacity 0.6s var(--ease-settle, ease),
+    filter 0.6s var(--ease-settle, ease);
+}
+
+.frame:focus-visible {
+  outline: 2px solid var(--accent-blue, #0066ff);
+  outline-offset: 4px;
+}
+
+.edge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.35rem;
+  font: 500 10px/1 var(--range-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--range-faint);
+}
+
+.edge:first-child {
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.timecode {
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.picture {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0d0d0d;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-settle, ease);
+}
+
+.frame:hover .image {
+  transform: scale(1.04);
+}
+
+/* Outlined square play button; fills on hover */
+.play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(244, 241, 234, 0.75);
+  background: rgba(13, 13, 13, 0.35);
+  color: var(--range-ink);
+  translate: -50% -50%;
+  transition: background 0.3s ease, color 0.3s ease, opacity 0.4s ease;
+}
+
+.play svg {
+  width: 1rem;
+  height: 1rem;
+  margin-left: 2px;
+}
+
+.frame:hover .play {
+  background: var(--range-ink);
+  color: #0d0d0d;
+}
+
+.title {
+  margin: 1rem 0 0;
+  font: 800 clamp(0.95rem, 1.25vw, 1.3rem) / 1.1 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  /* Whole pixels: at a fractional size this heavy, wide face rasterises unevenly and the letters look warped */
+  font-size: round(clamp(0.95rem, 1.25vw, 1.3rem), 1px);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  transition: opacity 0.6s var(--ease-settle, ease);
+}
+
+/* ---------- Pinned emphasis: the frame nearest the scroll position is full size and colour ---------- */
+.section[data-pinned] .item:not([data-active]) .frame {
+  opacity: 0.5;
+  filter: grayscale(1);
+  transform: scale(0.9);
+}
+
+.section[data-pinned] .item:not([data-active]) .title {
+  opacity: 0.35;
+}
+
+.section[data-pinned] .item:not([data-active]) .play {
+  opacity: 0;
+}
+
+.section[data-pinned] .item:not([data-active]) .frame:hover {
+  opacity: 0.85;
+  filter: none;
+}
+
+/* ---------- Progress ---------- */
+.progress {
+  display: none;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+  font: 500 11px/1 var(--range-mono);
+  letter-spacing: 0.2em;
+  color: var(--range-faint);
+}
+
+.section[data-pinned] .progress {
+  display: flex;
+}
+
+.counter {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.counter span {
+  color: var(--range-ink);
+}
+
+.bar {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--range-rule);
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--range-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.hint {
+  white-space: nowrap;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+/* The link out of the strip, under the progress row */
+.collection {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: clamp(1.25rem, 2.5vh, 2rem);
+}
+
+/* ---------- Swipe fallback (phones, reduced motion) ---------- */
+.section:not([data-pinned]) .viewport {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--range-gutter);
+  scrollbar-width: none;
+}
+
+.section:not([data-pinned]) .viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.section:not([data-pinned]) .item {
+  scroll-snap-align: start;
+}
+
+@media (max-width: 768px) {
+  .track {
+    --frame-w: min(80vw, 22rem);
+    padding-inline: var(--range-gutter);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame,
+  .image,
+  .play,
+  .title {
+    transition: none;
+  }
+}

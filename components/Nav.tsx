@@ -1,23 +1,47 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { Fragment, useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+
+// Shortcuts in the Work dropdown, each an anchor on the Work page
+const WORK_SECTIONS = [
+  { id: 'case-studies', label: 'Case studies' },
+  { id: 'campaign-range', label: 'Film library' },
+  { id: 'rescue-stories', label: 'Rescue stories' },
+]
+
+// Direct shortcuts into each case study, listed under "Case studies"
+const CASE_STUDIES = [
+  { href: '/work/nivea', label: 'NIVEA' },
+  { href: '/work/nescafe', label: 'NESCAFÉ' },
+]
+
+const HEADER_OFFSET = 80
+
+/** Scrolls to a section by id, retrying briefly while a newly loaded page renders it */
+const scrollToSection = (id: string, smooth: boolean) => {
+  let attempts = 0
+  const tryScroll = () => {
+    const element = document.getElementById(id)
+    if (element) {
+      window.scrollTo({
+        top: element.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET,
+        behavior: smooth ? 'smooth' : 'instant',
+      })
+      return
+    }
+    if (attempts++ < 40) setTimeout(tryScroll, 50)
+  }
+  tryScroll()
+}
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isWorkDropdownOpen, setIsWorkDropdownOpen] = useState(false)
-  const [pillStyle, setPillStyle] = useState({ width: 0, left: 0, opacity: 0 })
   const pathname = usePathname()
-  const router = useRouter()
-  
-  const workRef = useRef<HTMLAnchorElement>(null)
-  const servicesRef = useRef<HTMLAnchorElement>(null)
-  const studioRef = useRef<HTMLAnchorElement>(null)
-  const contactRef = useRef<HTMLAnchorElement>(null)
-  const navLinksRef = useRef<HTMLElement>(null)
-  
+
   // Check if we're on a case study page
   const isCaseStudyPage = pathname?.startsWith('/work/') && pathname !== '/work'
 
@@ -39,9 +63,10 @@ export default function Nav() {
           const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
           const offsetPosition = elementPosition - headerHeight
 
+          // Smooth on the same page; instant after navigating so the new page doesn't scroll past the hero
           window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth'
+            behavior: immediate ? 'smooth' : 'instant'
           })
           return true
         }
@@ -72,6 +97,14 @@ export default function Nav() {
   useEffect(() => {
     // Check if we should scroll based on sessionStorage flag
     if (typeof window !== 'undefined') {
+      // A Work dropdown shortcut used from another page: land on that section
+      const section = sessionStorage.getItem('navScrollTarget')
+      if (section) {
+        sessionStorage.removeItem('navScrollTarget')
+        scrollToSection(section, false)
+        return
+      }
+
       const shouldScroll = sessionStorage.getItem('navScroll')
       if (shouldScroll) {
         sessionStorage.removeItem('navScroll')
@@ -81,49 +114,6 @@ export default function Nav() {
     }
   }, [pathname])
   
-  // Update pill position based on active link
-  useEffect(() => {
-    const updatePillPosition = () => {
-      if (isMenuOpen) return // Don't show pill in mobile menu
-      
-      let activeRef: React.RefObject<HTMLAnchorElement> | null = null
-      
-      if (pathname === '/work' || isCaseStudyPage) {
-        activeRef = workRef
-      } else if (pathname === '/services') {
-        activeRef = servicesRef
-      } else if (pathname === '/studio') {
-        activeRef = studioRef
-      } else if (pathname === '/contact') {
-        activeRef = contactRef
-      }
-      
-      if (activeRef?.current && navLinksRef.current) {
-        const activeElement = activeRef.current
-        const navLinks = navLinksRef.current
-        const navLinksRect = navLinks.getBoundingClientRect()
-        const activeRect = activeElement.getBoundingClientRect()
-        
-        const left = activeRect.left - navLinksRect.left
-        const width = activeRect.width
-        
-        setPillStyle({
-          width,
-          left,
-          opacity: 1
-        })
-      } else {
-        setPillStyle(prev => ({ ...prev, opacity: 0 }))
-      }
-    }
-    
-    updatePillPosition()
-    
-    // Update on resize
-    window.addEventListener('resize', updatePillPosition)
-    return () => window.removeEventListener('resize', updatePillPosition)
-  }, [pathname, isCaseStudyPage, isMenuOpen])
-
   // Close menu when clicking outside or on a link
   useEffect(() => {
     if (isMenuOpen) {
@@ -170,12 +160,8 @@ export default function Nav() {
       e.preventDefault()
       scrollToContent(targetPath, true)
     } else {
-      // Set flag to scroll after navigation
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('navScroll', 'true')
-      }
-      // Navigate to new page
-      router.push(targetPath)
+      // Set flag to scroll after navigation; <Link> performs the navigation itself
+      sessionStorage.setItem('navScroll', 'true')
     }
   }
 
@@ -187,9 +173,6 @@ export default function Nav() {
     if (pathname === '/') {
       e.preventDefault()
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      // Navigate to home
-      router.push('/')
     }
   }
 
@@ -209,13 +192,12 @@ export default function Nav() {
       <header className={`site-header ${isMenuOpen ? 'menu-open' : ''} ${isCaseStudyPage ? 'case-study-nav' : ''}`} id="siteHeader">
         <div className="nav-inner">
           <Link href="/" className="brand" onClick={handleHomeClick} scroll={false}>
-            <Image 
-              src={isCaseStudyPage ? "/assets/Brandmark dark.png" : "/assets/logo.svg"} 
+            <Image
+              src={isCaseStudyPage ? "/assets/Brandmark dark.png" : "/assets/logo.svg"}
               alt="Wyntre" 
               className="brand-mark"
               width={100}
               height={100}
-              style={{ width: 'auto', height: '100%' }}
               priority
             />
           </Link>
@@ -232,16 +214,13 @@ export default function Nav() {
             <span></span>
           </button>
 
-          <nav 
-            ref={navLinksRef}
-            className={`nav-links ${isMenuOpen ? 'is-open' : ''}`} 
+          <nav
+            className={`nav-links ${isMenuOpen ? 'is-open' : ''}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="nav-pill" style={pillStyle} aria-hidden="true" />
             <div className="nav-dropdown">
-              <Link 
-                ref={workRef}
-                href="/work" 
+              <Link
+                href="/work"
                 className={`nav-link ${pathname === '/work' || isCaseStudyPage ? 'active' : ''}`}
                 onClick={(e) => {
                   if (!isMenuOpen) {
@@ -252,60 +231,79 @@ export default function Nav() {
                 }}
                 scroll={false}
               >
-                Work <span className={`dropdown-arrow ${isWorkDropdownOpen ? 'is-open' : ''}`}>▼</span>
+                Work
+                <span className={`dropdown-arrow ${isWorkDropdownOpen ? 'is-open' : ''}`} aria-hidden="true">
+                  <svg viewBox="0 0 10 6" focusable="false">
+                    <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                </span>
               </Link>
               <div className={`dropdown-menu ${isWorkDropdownOpen ? 'is-open' : ''}`}>
-                <Link href="/work#case-studies" onClick={(e) => {
-                  setIsMenuOpen(false)
-                  setIsWorkDropdownOpen(false)
-                  if (pathname === '/work') {
-                    e.preventDefault()
-                    const element = document.getElementById('case-studies')
-                    if (element) {
-                      const headerHeight = 80
-                      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-                      const offsetPosition = elementPosition - headerHeight
-                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
-                    }
-                  }
-                }} scroll={false}>Case Studies</Link>
-                <Link href="/work#campaign-range" onClick={(e) => {
-                  setIsMenuOpen(false)
-                  setIsWorkDropdownOpen(false)
-                  if (pathname === '/work') {
-                    e.preventDefault()
-                    const element = document.getElementById('campaign-range')
-                    if (element) {
-                      const headerHeight = 80
-                      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-                      const offsetPosition = elementPosition - headerHeight
-                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
-                    }
-                  }
-                }} scroll={false}>Campaign Range</Link>
+                {WORK_SECTIONS.map((section, i) => (
+                  <Fragment key={section.id}>
+                  <Link
+                    href={`/work#${section.id}`}
+                    scroll={false}
+                    onClick={(e) => {
+                      setIsMenuOpen(false)
+                      setIsWorkDropdownOpen(false)
+                      if (pathname === '/work') {
+                        e.preventDefault()
+                        scrollToSection(section.id, true)
+                      } else {
+                        // Scroll once the Work page has rendered
+                        sessionStorage.setItem('navScrollTarget', section.id)
+                      }
+                    }}
+                  >
+                    <span className="dropdown-index">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="dropdown-label">{section.label}</span>
+                    <svg className="dropdown-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M7 17L17 7M8.5 7H17v8.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+                    </svg>
+                  </Link>
+                  {section.id === 'case-studies'
+                    ? CASE_STUDIES.map((study) => (
+                        <Link
+                          key={study.href}
+                          href={study.href}
+                          className="dropdown-sub"
+                          aria-current={pathname === study.href ? 'page' : undefined}
+                          onClick={() => {
+                            setIsMenuOpen(false)
+                            setIsWorkDropdownOpen(false)
+                          }}
+                        >
+                          <span className="dropdown-index" aria-hidden="true" />
+                          <span className="dropdown-label">{study.label}</span>
+                          <svg className="dropdown-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M7 17L17 7M8.5 7H17v8.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+                          </svg>
+                        </Link>
+                      ))
+                    : null}
+                  </Fragment>
+                ))}
               </div>
             </div>
-            <Link 
-              ref={servicesRef}
-              href="/services" 
+            <Link
+              href="/services"
               className={pathname === '/services' ? 'active' : ''}
               onClick={(e) => handleLinkClick(e, '/services')} 
               scroll={false}
             >
               Services
             </Link>
-            <Link 
-              ref={studioRef}
-              href="/studio" 
+            <Link
+              href="/studio"
               className={pathname === '/studio' ? 'active' : ''}
               onClick={(e) => handleLinkClick(e, '/studio')} 
               scroll={false}
             >
               Studio
             </Link>
-            <Link 
-              ref={contactRef}
-              href="/contact" 
+            <Link
+              href="/contact"
               className={pathname === '/contact' ? 'active' : ''}
               onClick={(e) => handleLinkClick(e, '/contact')} 
               scroll={false}

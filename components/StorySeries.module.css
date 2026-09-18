@@ -1,0 +1,113 @@
+/* Sits in the story's white article column, after the lesson */
+.section {
+  margin-top: clamp(4.5rem, 8vw, 7rem);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* One film fills the column like the breakdown video; more become a grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: clamp(1.75rem, 3vw, 2.5rem) clamp(1rem, 2vw, 1.75rem);
+  max-width: 1100px;
+  margin: clamp(2rem, 3.5vw, 3rem) auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.film {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.picture {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0d0d0d;
+}
+
+.poster {
+  object-fit: cover;
+  transition: scale 0.6s var(--ease-settle, ease);
+}
+
+.film:hover .poster,
+.film:focus-visible .poster {
+  scale: 1.03;
+}
+
+.play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  padding-left: 3px;
+  translate: -50% -50%;
+  border: 1px solid rgba(244, 241, 234, 0.55);
+  background: rgba(13, 13, 13, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #f4f1ea;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.film:hover .play,
+.film:focus-visible .play {
+  background: #f4f1ea;
+  color: #0d0d0d;
+}
+
+.film:focus-visible {
+  outline: 2px solid var(--accent-blue, #0066ff);
+  outline-offset: 4px;
+}
+
+.caption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.number {
+  font: 500 11px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  color: rgba(13, 13, 13, 0.48);
+}
+
+.title {
+  font: 700 clamp(1rem, 1.2vw, 1.15rem) / 1.25 var(--font-inter), system-ui, sans-serif;
+}
+
+.meta {
+  margin-left: auto;
+  font: 500 11px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(13, 13, 13, 0.48);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster {
+    transition: none;
+  }
+}

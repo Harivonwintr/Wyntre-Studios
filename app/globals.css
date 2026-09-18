@@ -5,12 +5,13 @@
   box-sizing: border-box;
 }
 
-/* Prevent horizontal overflow globally */
+/* Prevent horizontal overflow globally. `clip` rather than `hidden`: hidden turns these elements into scroll
+   containers, which silently breaks position: sticky inside them */
 html,
 body,
 #__next,
 main {
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
   max-width: 100%;
 }
@@ -18,7 +19,7 @@ main {
 section {
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 :root {
@@ -74,6 +75,47 @@ section {
   --ink-400: rgba(255,255,255,.55);
   --ink-200: rgba(255,255,255,.35);
   --accent: #FEC20E;
+}
+
+/* =========================
+   Motion
+   ========================= */
+:root {
+  /* Two curves: snap for quick decisive moves, settle for reveals that ease into place */
+  --ease-snap: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 450ms;
+  --dur-slow: 900ms;
+}
+
+/* Blocks marked data-reveal="up" rise into place when they scroll into view (see MotionProvider).
+   Uses the `translate` property so it composes with any transform the element already has. */
+html[data-motion='ready'] [data-reveal='up'] {
+  transition:
+    opacity var(--dur-slow) var(--ease-settle),
+    translate var(--dur-slow) var(--ease-settle);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion='ready'] [data-reveal='up']:not([data-inview]) {
+  opacity: 0;
+  translate: 0 28px;
+}
+
+/* Lenis smooth scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+/* Native smooth scrolling fights Lenis's per-frame scroll updates, so it's off whenever Lenis runs */
+html.lenis {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
 }
 
 .section-dark {
@@ -144,12 +186,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Contained, spaced row */
 .nav-inner{
-  max-width: 1200px;
+  /* Same width and side gutters as the page sections */
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 18px 24px;
+  padding: 18px clamp(16px, 4vw, 64px);
   padding-top: max(18px, env(safe-area-inset-top, 0px));
-  padding-left: max(24px, env(safe-area-inset-left, 0px));
-  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-left: max(clamp(16px, 4vw, 64px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 4vw, 64px), env(safe-area-inset-right, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -157,8 +200,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Brand */
-.brand-mark{ 
-  height: 100px; 
+.brand-mark{
+  height: 44px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -168,145 +211,176 @@ h1, h2, h3, h4, h5, h6 {
 .nav-links{
   display:flex;
   align-items:center;
-  gap: clamp(64px, 12vw, 120px);  /* responsive spacing */
+  gap: clamp(1.75rem, 3vw, 3.25rem);
   position: relative;
 }
 
-/* Sliding pill indicator */
-.nav-pill {
-  position: absolute;
-  height: 24px;
-  background-color: var(--accent-yellow);
-  border-radius: 12px;
-  transition: width var(--transition-medium), 
-              left var(--transition-medium),
-              opacity var(--transition-fast);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.nav-links a{
-  font-family: var(--font-heading);
-  color: rgba(255,255,255,.9);
-  text-decoration:none;
-  font-size: 12px;
-  line-height: 1;
-  letter-spacing: .3px;
+/* Mono labels; grey at rest, off-white on hover and for the current page */
+.nav-links a,
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font: 500 12px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: .22em;
   text-transform: uppercase;
-  transition: color .2s ease, opacity .2s ease, transform 0.35s cubic-bezier(0.4,0,0.2,1);
-  padding: 6px 12px;
-  transform: scale(1);
-  will-change: transform;
-  display: inline-block;
-  position: relative;
-  z-index: 1;
+  color: rgba(244, 241, 234, .65);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .2s ease;
 }
-.nav-links a:hover{ 
-  color:#fff; 
-  transform: scale(1.04);
+
+/* Underline grows from the left on hover and stays under the current page */
+.nav-links > a::after,
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: .22em;
+  bottom: 0;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1);
 }
-.nav-links a.active {
-  color: #0a0b0d;
+
+.nav-links a:hover,
+.nav-links a.active,
+.nav-link:hover,
+.nav-link.active {
+  color: #f4f1ea;
 }
-.nav-links a.active:hover {
-  color: #0a0b0d;
+
+.nav-links > a:hover::after,
+.nav-links > a.active::after,
+.nav-link:hover::after,
+.nav-link.active::after {
+  transform: scaleX(1);
+}
+
+.nav-links a:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 4px;
 }
 
 /* Dropdown Menu */
 .nav-dropdown {
   position: relative;
-  z-index: 1;
-}
-
-.nav-link {
-  font-family: 'Monument Extended Regular', 'Inter', Arial, sans-serif;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-  transform: scale(1);
-  will-change: transform;
-  padding: 6px 12px;
-  position: relative;
-  z-index: 1;
-}
-.nav-link.active {
-  color: #0a0b0d;
-}
-.nav-link.active:hover {
-  color: #0a0b0d;
 }
 
 .dropdown-arrow {
-  font-size: 10px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  opacity: 0.7;
-  display: inline-block;
+  display: inline-flex;
+  transition: transform .3s ease;
 }
 
-.nav-link:hover {
-  transform: scale(1.04);
+.dropdown-arrow svg {
+  width: 9px;
+  height: 6px;
 }
 
-.nav-dropdown:hover .dropdown-arrow {
+.nav-dropdown:hover .dropdown-arrow,
+.dropdown-arrow.is-open {
   transform: rotate(180deg);
-  opacity: 1;
 }
 
+/* Unfolds from the top edge: clip-path opens downward while it fades in */
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
-  background: #000000;
-  backdrop-filter: blur(10px);
-  border: none;
-  border-radius: 0;
-  padding: 8px 0;
-  min-width: 180px;
+  left: -12px;
+  margin-top: 14px;
+  min-width: 250px;
+  padding: 6px;
+  background: #0d0d0d;
+  border: 1px solid rgba(244, 241, 234, .12);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  clip-path: inset(0 0 100% 0);
+  transition:
+    opacity .25s ease,
+    clip-path .35s var(--ease-settle),
+    visibility .35s ease;
   z-index: 1000;
-  margin-top: 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
   white-space: nowrap;
 }
 
-.nav-dropdown:hover .dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown-menu a {
-  font-family: var(--font-heading);
-  display: block;
-  padding: 12px 20px;
-  color: #fff;
-  font-size: 11px;
-  transition: background 0.2s ease, color 0.2s ease;
-  text-decoration: none;
-  position: relative;
-  text-align: left;
-}
-
-.dropdown-menu a:not(:last-child)::after {
+/* Bridges the gap so the menu stays open while the pointer crosses it */
+.dropdown-menu::before {
   content: "";
   position: absolute;
-  bottom: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
+  top: -14px;
+  height: 14px;
 }
 
-.dropdown-menu a:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+.nav-dropdown:hover .dropdown-menu,
+.nav-dropdown:focus-within .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  clip-path: inset(0 0 0 0);
+}
+
+/* Index, label and an arrow that slides in on hover; no dividers */
+.dropdown-menu a {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) 14px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 12px 10px;
+  font-size: 11px;
+  letter-spacing: .2em;
+  color: rgba(244, 241, 234, .65);
+  transition: background .2s ease, color .2s ease;
+}
+
+.dropdown-index {
+  letter-spacing: .08em;
+  color: rgba(244, 241, 234, .35);
+}
+
+.dropdown-go {
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity .2s ease, transform .25s var(--ease-settle);
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu a:focus-visible {
+  background: rgba(244, 241, 234, .06);
+  color: #f4f1ea;
+}
+
+/* Case study shortcuts nested under "Case studies": indented behind a hairline, a step quieter */
+.dropdown-menu a.dropdown-sub {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 10px;
+  color: rgba(244, 241, 234, .5);
+}
+
+.dropdown-menu a.dropdown-sub .dropdown-index {
+  justify-self: end;
+  width: 12px;
+  height: 1px;
+  margin-right: 4px;
+  background: rgba(244, 241, 234, .3);
+}
+
+.dropdown-menu a.dropdown-sub[aria-current='page'] {
+  color: #f4f1ea;
+}
+
+.dropdown-menu a:hover .dropdown-go,
+.dropdown-menu a:focus-visible .dropdown-go {
+  opacity: 1;
+  transform: none;
 }
 
 /* Optional: make the whole bar taller */
@@ -320,11 +394,26 @@ h1, h2, h3, h4, h5, h6 {
 
 
 
+/* Monument Extended Ultrabold is read from the locally installed font until a licensed web font file is added */
+@font-face {
+  font-family: 'Monument Extended Ultrabold Local';
+  src: local('Monument Extended Ultrabold'), local('MonumentExtended-Ultrabold');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Keep hash-linked service headings (e.g. /services#vfx) clear of the header */
+.services-title-standalone[id] {
+  scroll-margin-top: 120px;
+}
+
 html {
   scroll-behavior: smooth;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  /* clip, not hidden: hidden makes the root a scroll container and breaks position: sticky */
+  overflow-x: clip;
   width: 100%;
   max-width: 100%;
 }
@@ -335,7 +424,7 @@ body {
   font-family: var(--font-body);
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
   max-width: 100%;
   position: relative;
@@ -614,11 +703,6 @@ background: linear-gradient(
    Campaign Range (scoped)
    ========================= */
 
-
-#campaign-range{
-  padding: 60px 0 40px 0;
-  margin: 0;
-}
 
 /* Case study page campaign range - override padding and animations */
 .case-study-content #campaign-range {
@@ -953,11 +1037,6 @@ background: linear-gradient(
 }
 
 /* --- Case Studies (layout + sensible sizes so center reveal looks right) --- */
-#case-studies{
-  position: relative;          /* ensure it layers above the dark spine while pinned */
-  z-index: 1;
-  background: #ECF0F1;         /* keep the band light while pinned */
-}
 
 .cs-intro { 
   max-width: 1100px; 
@@ -1396,6 +1475,7 @@ a.cs-card:hover .card-title {
 .footer-wrap{
   max-width: var(--container);
   margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 32px);
 }
 
 /* Grid — logo + four columns */
@@ -1473,13 +1553,6 @@ a.cs-card:hover .card-title {
   }
 }
 
-#clients { 
-  background:#0a0b0d; 
-  position: relative;
-  z-index:1;
-  padding: 60px 0;
-}
-
 /* When clients is inside campaign-range, make it full width */
 #campaign-range #clients {
   width: 100vw;
@@ -1527,12 +1600,6 @@ a.cs-card:hover .card-title {
 
 #drives-seq {
   margin-top: 0;
-}
-
-#contact {
-  background: #fff;
-  color: #0a0b0d;
-  padding: 4rem 0;
 }
 
 /* Contact Section */
@@ -3177,11 +3244,6 @@ a.cs-card:hover .card-title {
 }
 
 
-.dropdown-arrow.is-open {
-  transform: rotate(180deg);
-  opacity: 1;
-}
-
 /* Navigation - Mobile & Tablet */
 @media (max-width: 1024px) {
   .nav-inner {
@@ -3189,13 +3251,13 @@ a.cs-card:hover .card-title {
   }
 
   .brand-mark {
-    height: 80px;
+    height: 40px;
     width: auto;
     object-fit: contain;
   }
 
   .nav-links {
-    gap: 4rem;
+    gap: 2rem;
     font-size: 0.9rem;
   }
 
@@ -3213,7 +3275,7 @@ a.cs-card:hover .card-title {
   }
 
   .brand-mark {
-    height: 60px;
+    height: 34px;
     width: auto;
     object-fit: contain;
   }
@@ -3228,7 +3290,7 @@ a.cs-card:hover .card-title {
     right: 0;
     width: 280px;
     height: 100vh;
-    background: #0a0b0d;
+    background: #0d0d0d;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
@@ -3257,47 +3319,34 @@ a.cs-card:hover .card-title {
   .nav-links a,
   .nav-links .nav-link {
     width: 100%;
-    padding: 16px 0;
-    font-size: 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
+    padding: 18px 0;
+    font: 800 18px/1 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+    letter-spacing: 0;
+    border-bottom: 1px solid rgba(244, 241, 234, 0.1);
+    color: rgba(244, 241, 234, 0.65);
     text-align: left;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    filter: none;
-    transform: translateZ(0);
-    border-radius: 0;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    transition: color .2s ease, padding .2s ease, box-shadow .2s ease;
+  }
+
+  .nav-links > a::after,
+  .nav-link::after {
+    display: none;
   }
 
   .nav-links a:hover,
   .nav-links .nav-link:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.05);
-    padding-left: 8px;
-    transition: all 0.2s ease;
+    color: #f4f1ea;
   }
 
-  .nav-pill {
-    display: none; /* Hide pill on mobile */
-  }
-
+  /* Current page: full colour with a bar on the left */
   .nav-links a.active,
   .nav-links .nav-link.active {
-    background-color: #f4c94a;
-    color: #0a0b0d;
+    color: #f4f1ea;
     padding-left: 16px;
-  }
-
-  .nav-links a.active:hover,
-  .nav-links .nav-link.active:hover {
-    background-color: #f4c94a;
-    color: #0a0b0d;
+    box-shadow: inset 3px 0 0 #f4f1ea;
   }
 
   .nav-dropdown {
@@ -3310,6 +3359,7 @@ a.cs-card:hover .card-title {
     opacity: 1;
     visibility: visible;
     transform: none;
+    clip-path: none;
     background: transparent;
     padding: 0;
     margin: 0;
@@ -3322,26 +3372,37 @@ a.cs-card:hover .card-title {
   }
 
   .dropdown-menu.is-open {
-    max-height: 200px;
+    max-height: 340px;
     padding: 8px 0 0 0;
     margin-bottom: 8px;
   }
 
-  .dropdown-menu a {
-    padding: 12px 0 12px 24px;
-    font-size: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: #fff;
-  }
-
-  .dropdown-menu a:not(:last-child)::after {
+  .dropdown-menu::before {
     display: none;
   }
 
+  .dropdown-menu a,
+  .nav-links .dropdown-menu a {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) 14px;
+    justify-content: normal;
+    padding: 14px 0 14px 8px;
+    font: 500 11px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+    letter-spacing: .2em;
+    border-top: 0;
+    border-bottom: 1px solid rgba(244, 241, 234, 0.1);
+    color: rgba(244, 241, 234, 0.65);
+  }
+
+  /* Touch: the arrow is always visible since there's no hover */
+  .dropdown-go {
+    opacity: 0.6;
+    transform: none;
+  }
+
   .dropdown-menu a:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-    padding-left: 32px;
+    background: transparent;
+    color: #f4f1ea;
   }
 
   .dropdown-arrow {
@@ -3877,10 +3938,6 @@ a.cs-card:hover .card-title {
 
 /* Clients Section - Mobile & Tablet */
 @media (max-width: 1024px) {
-  #clients {
-    padding: 60px 0;
-  }
-
   .clients-heading {
     font-size: clamp(1.8rem, 5vw, 3rem);
     margin-bottom: 2rem;
@@ -3888,11 +3945,6 @@ a.cs-card:hover .card-title {
 }
 
 @media (max-width: 768px) {
-  #clients {
-    padding: 40px 0;
-    overflow: hidden;
-  }
-
   .clients-heading {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
     margin-bottom: 1.5rem;
@@ -4175,36 +4227,28 @@ a.cs-card:hover .card-title {
   min-height: 100vh;
 }
 
-/* Nav bar items color for case study pages */
-.site-header.case-study-nav .nav-links a,
-.site-header.case-study-nav .nav-link {
-  color: #0D1117;
+
+/* Dark nav links over the light case study opener; the dropdown and mobile drawer stay dark */
+@media (min-width: 769px) {
+  .site-header.case-study-nav .nav-links > a,
+  .site-header.case-study-nav .nav-link {
+    color: rgba(13, 13, 13, 0.6);
+  }
+
+  .site-header.case-study-nav .nav-links > a:hover,
+  .site-header.case-study-nav .nav-links > a.active,
+  .site-header.case-study-nav .nav-link:hover,
+  .site-header.case-study-nav .nav-link.active {
+    color: #0d0d0d;
+  }
 }
 
-.site-header.case-study-nav .nav-links a:hover,
-.site-header.case-study-nav .nav-link:hover {
-  color: #0D1117;
-  opacity: 0.8;
+.site-header.case-study-nav .hamburger span {
+  background: #0d0d0d;
 }
 
-.site-header.case-study-nav .nav-pill {
-  background-color: #f4c94a;
-}
-
-.site-header.case-study-nav .nav-links a.active,
-.site-header.case-study-nav .nav-link.active {
-  color: #0a0b0d;
-  opacity: 1;
-}
-
-.site-header.case-study-nav .nav-links a.active:hover,
-.site-header.case-study-nav .nav-link.active:hover {
-  color: #0a0b0d;
-  opacity: 1;
-}
-
-.site-header.case-study-nav .dropdown-arrow {
-  color: #0D1117;
+.site-header.case-study-nav.menu-open .hamburger span {
+  background: rgba(244, 241, 234, 0.9);
 }
 
 /* Case Study Header */
@@ -4701,15 +4745,7 @@ a.cs-card:hover .card-title {
 /* Disable all hover animations on mobile and tablet */
 @media (max-width: 1024px) {
   /* Navigation hover effects */
-  .nav-links a:hover,
-  .nav-link:hover,
-  .nav-links a.active:hover,
-  .nav-link.active:hover {
-    color: inherit !important;
-    transform: none !important;
-  }
-  
-  .nav-dropdown:hover .dropdown-arrow {
+  .nav-dropdown:hover .dropdown-arrow:not(.is-open) {
     transform: none !important;
   }
   
@@ -4776,18 +4812,6 @@ a.cs-card:hover .card-title {
   /* Info item hover effects */
   .info-item a:hover,
   .studio-contact .info-item a:hover {
-    color: inherit !important;
-  }
-  
-  /* Case study navigation hover effects */
-  .site-header.case-study-nav .nav-links a:hover,
-  .site-header.case-study-nav .nav-link:hover {
-    color: inherit !important;
-    transform: none !important;
-  }
-  
-  .site-header.case-study-nav .nav-links a.active:hover,
-  .site-header.case-study-nav .nav-link.active:hover {
     color: inherit !important;
   }
   

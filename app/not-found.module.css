@@ -1,0 +1,113 @@
+.section {
+  --nf-ink: #f4f1ea;
+  --nf-soft: rgba(244, 241, 234, 0.72);
+  --nf-faint: rgba(244, 241, 234, 0.45);
+  --nf-rule: rgba(244, 241, 234, 0.22);
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(7rem, 12vh, 9rem) clamp(16px, 4vw, 64px) clamp(4rem, 8vh, 6rem);
+  overflow: hidden;
+  background: #0d0d0d;
+  color: var(--nf-ink);
+}
+
+.frame {
+  color: var(--nf-faint);
+}
+
+.inner {
+  position: relative;
+  width: min(100%, 880px);
+}
+
+.slate {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+  font: 500 11px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--nf-faint);
+}
+
+.rule {
+  flex: 0 0 clamp(2rem, 6vw, 5rem);
+  height: 1px;
+  background: var(--nf-rule);
+}
+
+.heading {
+  margin: 0;
+  font-family: 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  font-weight: 800;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.lead,
+.hero {
+  display: block;
+}
+
+.lead {
+  font-size: clamp(1.6rem, 4.5vw, 3.6rem);
+}
+
+.hero {
+  font-size: clamp(2.8rem, 9.5vw, 7.75rem);
+}
+
+.body {
+  margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+  font: 400 clamp(1rem, 1.2vw, 1.15rem) / 1.5 var(--font-inter), system-ui, sans-serif;
+  color: var(--nf-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.secondary {
+  font: 500 11px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--nf-faint);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.secondary:hover,
+.secondary:focus-visible {
+  color: var(--nf-ink);
+}
+
+/* In the open space beside the short lead line, clear of the payoff and the buttons */
+.note {
+  position: absolute;
+  top: -3.5rem;
+  right: 4%;
+  width: clamp(140px, 13vw, 190px);
+  height: auto;
+  rotate: 6deg;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  .note {
+    position: static;
+    display: block;
+    width: 150px;
+    margin: 2.5rem 0 0 auto;
+  }
+}

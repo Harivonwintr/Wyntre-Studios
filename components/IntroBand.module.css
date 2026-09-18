@@ -1,0 +1,184 @@
+.section {
+  --band-ink: #f4f1ea;
+  --band-soft: rgba(244, 241, 234, 0.72);
+  --band-faint: rgba(244, 241, 234, 0.45);
+  --band-rule: rgba(244, 241, 234, 0.16);
+
+  position: relative;
+  padding-block: clamp(4rem, 7vw, 7rem);
+  padding-inline: clamp(16px, 4vw, 64px);
+  background: #0d0d0d;
+  color: var(--band-ink);
+}
+
+.inner {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ---------- Headline row ---------- */
+.top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.9fr) minmax(0, 0.6fr);
+  align-items: center;
+  gap: clamp(2rem, 4vw, 4.5rem);
+}
+
+.noPhoto {
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+}
+
+/* Centred: headline on the centre line, copy stacked under it */
+.stacked {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+
+.stacked .intro {
+  align-items: center;
+  margin-top: clamp(1.5rem, 2.5vw, 2.25rem);
+}
+
+/* Standing alone under the headline, so it carries the same weight as other lead paragraphs */
+.stacked .intro p {
+  max-width: min(100%, 72ch);
+  font-size: clamp(1.05rem, 1.25vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--band-ink);
+}
+
+/* Each sentence holds its own line rather than wrapping mid-thought */
+@media (min-width: 860px) {
+  .stacked .intro p span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .stacked .intro p br {
+    display: none;
+  }
+}
+
+/* Headline standing alone, with the photo (if any) beside it */
+.noIntro {
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.6fr);
+}
+
+.noIntro.noPhoto {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.75rem;
+}
+
+.intro p {
+  margin: 0;
+  max-width: 38ch;
+  font: 400 clamp(0.95rem, 1vw, 1.05rem) / 1.6 var(--font-inter), system-ui, sans-serif;
+  color: var(--band-soft);
+}
+
+/* The wrapper carries the tilt so the photo and its tape move together */
+.photoWrap {
+  position: relative;
+  transform: rotate(2deg);
+}
+
+.photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  box-shadow: 0 0 0 6px #f4f1ea, 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+.photoTape {
+  position: absolute;
+  top: -6%;
+  left: 50%;
+  z-index: 2;
+  width: 44%;
+  height: auto;
+  translate: -50% 0;
+  rotate: -4deg;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.photoImage {
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+
+/* ---------- Stats ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: clamp(3.5rem, 6vw, 5.5rem) 0 0;
+  border-top: 1px solid var(--band-rule);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  padding: clamp(1.5rem, 2.5vw, 2.25rem) clamp(1rem, 2vw, 2rem) 0;
+  border-left: 1px solid var(--band-rule);
+}
+
+.stat:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.statValue {
+  margin: 0;
+  font: 800 clamp(1.75rem, 3.6vw, 4rem) / 1 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.statLabel {
+  font: 500 11px/1.4 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--band-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .top {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+
+  /* The photo hides at this width, so a lone headline takes the full row */
+  .noIntro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .photoWrap {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .top {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2rem;
+  }
+
+  .stat:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+}

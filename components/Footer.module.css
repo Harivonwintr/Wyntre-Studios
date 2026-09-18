@@ -1,0 +1,130 @@
+.footer {
+  --footer-ink: #f4f1ea;
+  --footer-soft: rgba(244, 241, 234, 0.7);
+  --footer-faint: rgba(244, 241, 234, 0.45);
+  --footer-rule: rgba(244, 241, 234, 0.14);
+  --footer-blue: var(--accent-blue, #0066ff);
+  --footer-mono: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+
+  padding-block: clamp(4rem, 7vw, 6.5rem) clamp(1.5rem, 2.5vw, 2rem);
+  padding-inline: clamp(16px, 4vw, 64px);
+  background: #0d0d0d;
+  color: var(--footer-ink);
+  /* Separates the footer from the dark contact section above it */
+  border-top: 1px solid var(--footer-rule);
+}
+
+.inner {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ---------- Columns ---------- */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 2.5rem clamp(2rem, 4vw, 5rem);
+  padding-bottom: clamp(2.5rem, 4.5vw, 4rem);
+}
+
+/* Logo column, first in the grid: the mark sits in the middle of its cell */
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand a {
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+.brand a:hover {
+  opacity: 0.8;
+}
+
+/* Scaled to hold its own beside the footer columns */
+.logo {
+  display: block;
+  width: clamp(72px, 7vw, 104px);
+  height: auto;
+}
+
+.label {
+  margin: 0 0 1.25rem;
+  font: 500 12px/1 var(--footer-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--footer-soft);
+}
+
+.index {
+  color: var(--footer-faint);
+}
+
+.list {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list a,
+.address {
+  color: var(--footer-ink);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.address {
+  font: 400 clamp(0.95rem, 1vw, 1.05rem) / 1.55 var(--font-inter), system-ui, sans-serif;
+  font-style: normal;
+}
+
+.list a:hover {
+  color: var(--footer-blue);
+}
+
+/* ---------- Bottom bar ---------- */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding-top: clamp(1.25rem, 2vw, 1.75rem);
+  border-top: 1px solid var(--footer-rule);
+  font: 500 11px/1.4 var(--footer-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--footer-faint);
+}
+
+.backToTop {
+  color: var(--footer-soft);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.backToTop:hover {
+  color: var(--footer-blue);
+}
+
+.footer a:focus-visible {
+  outline: 2px solid var(--footer-blue);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .meta {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list a,
+  .backToTop {
+    transition: none;
+  }
+}

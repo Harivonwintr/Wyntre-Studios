@@ -1,190 +1,118 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useState, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { syncSmoothScroll } from '@/utils/smoothScroll'
 import styles from './PageTransition.module.css'
 
-interface PageTransitionProps {
-  children: React.ReactNode
-}
+type Variant = 'none' | 'fade'
 
-export default function PageTransition({ children }: PageTransitionProps) {
+const isCaseStudy = (path: string | null) => !!path && path.startsWith('/work/') && path !== '/work'
+
+/**
+ * Fades each new page in where it lands. Opacity only: a transform on the page would break fixed-position
+ * pinning (the campaign film strip) while the animation runs.
+ */
+export default function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const [displayChildren, setDisplayChildren] = useState(children)
-  const [prevChildren, setPrevChildren] = useState<React.ReactNode>(null)
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const [isBackNavigation, setIsBackNavigation] = useState(false)
-  const [shouldAnimate, setShouldAnimate] = useState(false)
   const prevPathRef = useRef<string | null>(null)
-  const prevChildrenRef = useRef<React.ReactNode>(children)
-  const enteringLayerRef = useRef<HTMLDivElement>(null)
-  const exitingLayerRef = useRef<HTMLDivElement>(null)
+  // Set when the route change came from the browser's back/forward buttons, which restore scroll themselves
+  const fromHistoryRef = useRef(false)
+  const [variant, setVariant] = useState<Variant>('none')
 
-  // Listen for browser back/forward navigation
+  // Browser back from a case study counts as a back navigation
   useEffect(() => {
     const handlePopState = () => {
-      // When browser back is used, mark as back navigation if going from case study
-      const currentPath = window.location.pathname
-      const isCaseStudyRoute = currentPath?.startsWith('/work/') && currentPath !== '/work'
-      
-      // If we're on a case study page and user clicks back, mark as back navigation
-      if (isCaseStudyRoute) {
+      fromHistoryRef.current = true
+      if (isCaseStudy(window.location.pathname)) {
         sessionStorage.setItem('isBackNavigation', 'true')
       }
     }
-
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
   useLayoutEffect(() => {
-    const isCaseStudyRoute = pathname?.startsWith('/work/') && pathname !== '/work'
     const prevPath = prevPathRef.current
-    const prevIsCaseStudy = prevPath?.startsWith('/work/') && prevPath !== '/work'
+    prevPathRef.current = pathname
+    if (!prevPath || prevPath === pathname) return
 
-    // Detect if this is a back navigation (from case study to any origin page)
-    const navigatingToCaseStudy = typeof window !== 'undefined' 
-      ? sessionStorage.getItem('navigatingToCaseStudy') === 'true'
-      : false
-    
-    const isBackNavFlag = typeof window !== 'undefined'
-      ? sessionStorage.getItem('isBackNavigation') === 'true'
-      : false
-    
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('navigatingToCaseStudy')
-      if (isBackNavFlag) {
-        sessionStorage.removeItem('isBackNavigation')
+    // A glide still running from the previous page would otherwise carry on and pull the new page down with it
+    syncSmoothScroll()
+
+    const toCaseStudy = sessionStorage.getItem('navigatingToCaseStudy') === 'true'
+    const backFlag = sessionStorage.getItem('isBackNavigation') === 'true'
+    sessionStorage.removeItem('navigatingToCaseStudy')
+    sessionStorage.removeItem('isBackNavigation')
+
+    setVariant('fade')
+
+    const isBack = backFlag || (isCaseStudy(prevPath) && !isCaseStudy(pathname) && !toCaseStudy)
+    const fromHistory = fromHistoryRef.current
+    fromHistoryRef.current = false
+    const saved = isBack ? sessionStorage.getItem('caseStudyOriginScroll') : null
+
+    if (!saved) {
+      // New pages start at the top, unless the link targets a section (a #hash, or a nav shortcut the Nav and
+      // ConditionalHero handle) or the browser is restoring its own position on back/forward
+      const targetsSection =
+        !!window.location.hash || !!sessionStorage.getItem('navScroll') || !!sessionStorage.getItem('navScrollTarget')
+      if (!isBack && !fromHistory && !targetsSection) {
+        window.scrollTo({ top: 0, behavior: 'instant' })
       }
+      syncSmoothScroll()
+      // Browser back/forward restores its position after this runs, and the new page's height settles late
+      const settle = requestAnimationFrame(() => requestAnimationFrame(syncSmoothScroll))
+      return () => cancelAnimationFrame(settle)
     }
 
-    // Check if we're navigating back from a case study to any page
-    const isBackNav = (prevIsCaseStudy && !isCaseStudyRoute && !navigatingToCaseStudy) || isBackNavFlag
+    sessionStorage.removeItem('caseStudyOriginScroll')
+    sessionStorage.removeItem('caseStudyOriginPath')
+    const top = parseInt(saved, 10)
 
-    // Only animate if navigating to/from case study pages
-    if ((isCaseStudyRoute || prevIsCaseStudy) && prevPath && prevPath !== pathname) {
-      // Store previous children BEFORE updating
-      const childrenToStore = prevChildrenRef.current
-      
-      // Set all states synchronously to ensure both layers render
-      setIsBackNavigation(isBackNav)
-      setIsTransitioning(true)
-      setPrevChildren(childrenToStore)
-      setDisplayChildren(children)
-      prevChildrenRef.current = children
-      setShouldAnimate(false) // Reset animation trigger
-
-      // Store the navigation direction for useEffect
-      return
-    } else {
-      // No transition for other routes or initial load
-      setDisplayChildren(children)
-      prevChildrenRef.current = children
-      setPrevChildren(null)
-      setIsTransitioning(false)
-      setIsBackNavigation(false)
+    // Return to where the visitor left the origin page. Pinned sections add scroll space once they build, which
+    // shifts the page, so restore again after each ScrollTrigger refresh until the visitor scrolls themselves.
+    const restore = () => {
+      window.scrollTo({ top, behavior: 'instant' })
+      syncSmoothScroll()
+    }
+    let userScrolled = false
+    const markUserScroll = () => {
+      userScrolled = true
+    }
+    const onRefresh = () => {
+      if (!userScrolled) restore()
     }
 
-    // Store current path for next navigation
-    prevPathRef.current = pathname || null
-  }, [pathname, children])
+    restore()
+    requestAnimationFrame(restore)
+    ScrollTrigger.addEventListener('refresh', onRefresh)
+    window.addEventListener('wheel', markUserScroll, { passive: true, once: true })
+    window.addEventListener('touchstart', markUserScroll, { passive: true, once: true })
+    window.addEventListener('keydown', markUserScroll, { once: true })
 
-  // Trigger animation after DOM is ready
-  useEffect(() => {
-    if (!isTransitioning) {
-      setShouldAnimate(false)
-      return
+    const stop = setTimeout(() => {
+      ScrollTrigger.removeEventListener('refresh', onRefresh)
+      window.removeEventListener('wheel', markUserScroll)
+      window.removeEventListener('touchstart', markUserScroll)
+      window.removeEventListener('keydown', markUserScroll)
+    }, 2000)
+
+    return () => {
+      clearTimeout(stop)
+      ScrollTrigger.removeEventListener('refresh', onRefresh)
+      window.removeEventListener('wheel', markUserScroll)
+      window.removeEventListener('touchstart', markUserScroll)
+      window.removeEventListener('keydown', markUserScroll)
     }
-
-    // Small delay to ensure both layers are in DOM, then trigger animation
-    const timer = setTimeout(() => {
-      setShouldAnimate(true)
-    }, 10)
-
-    // If going back from case study, restore scroll position after animation
-    if (isBackNavigation) {
-      const scrollPosition = typeof window !== 'undefined'
-        ? sessionStorage.getItem('caseStudyOriginScroll')
-        : null
-
-      const completeTimer = setTimeout(() => {
-        setIsTransitioning(false)
-        setPrevChildren(null)
-        setIsBackNavigation(false)
-        
-        // Restore scroll position with a slight delay to ensure DOM is ready
-        if (scrollPosition && typeof window !== 'undefined') {
-          // Use requestAnimationFrame to ensure DOM is fully rendered
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              window.scrollTo({
-                top: parseInt(scrollPosition, 10),
-                behavior: 'instant'
-              })
-              sessionStorage.removeItem('caseStudyOriginScroll')
-              sessionStorage.removeItem('caseStudyOriginPath')
-            })
-          })
-        }
-      }, 600) // Full animation duration
-
-      return () => {
-        clearTimeout(timer)
-        clearTimeout(completeTimer)
-      }
-    } else {
-      // Forward navigation - complete transition after animation
-      const completeTimer = setTimeout(() => {
-        setIsTransitioning(false)
-        setPrevChildren(null)
-        setIsBackNavigation(false)
-      }, 600) // Full animation duration
-
-      return () => {
-        clearTimeout(timer)
-        clearTimeout(completeTimer)
-      }
-    }
-  }, [isTransitioning, isBackNavigation])
-
-  const isCaseStudyPage = pathname?.startsWith('/work/') && pathname !== '/work'
-  const prevPath = prevPathRef.current
-
-  // Determine animation classes - only apply if shouldAnimate is true
-  const exitClass = (isTransitioning && shouldAnimate && isBackNavigation) 
-    ? styles.pageExitRight 
-    : (isTransitioning && shouldAnimate && !isBackNavigation) 
-      ? styles.pageExit 
-      : ''
-  const enterClass = (isTransitioning && shouldAnimate && isBackNavigation) 
-    ? styles.slideInFromLeft 
-    : (isTransitioning && shouldAnimate && isCaseStudyPage && !isBackNavigation) 
-      ? styles.slideIn 
-      : ''
+  }, [pathname])
 
   return (
-    <div 
-      className={`${styles.pageWrapper} ${isTransitioning ? styles.transitioning : ''} ${isCaseStudyPage ? styles.caseStudyPage : ''} ${isBackNavigation ? styles.backNavigation : ''}`}
-    >
-      {/* Previous page - sliding out */}
-      {prevChildren && (
-        <div
-          ref={exitingLayerRef}
-          key={`prev-${prevPath ?? 'none'}`}
-          className={`${styles.pageLayer} ${exitClass}`}
-        >
-          {prevChildren}
-        </div>
-      )}
-      {/* Current page - sliding in */}
-      <div
-        ref={enteringLayerRef}
-        key={`curr-${pathname ?? 'none'}`}
-        className={`${styles.pageLayer} ${enterClass}`}
-      >
-        {displayChildren}
+    <div className={styles.pageWrapper}>
+      <div key={pathname} className={`${styles.pageLayer} ${variant === 'fade' ? styles.fade : ''}`}>
+        {children}
       </div>
     </div>
   )
 }
-

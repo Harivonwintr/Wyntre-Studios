@@ -1,0 +1,85 @@
+/* Takes its colour from the section, so it works on dark and light grounds */
+.slate {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  /* Bottom only, so sections can still set their own top and inline margins */
+  margin-bottom: clamp(2.25rem, 4vw, 3.5rem);
+  font: 500 12px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.index {
+  opacity: 0.55;
+  white-space: nowrap;
+}
+
+.label {
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.rule {
+  flex: 1;
+  min-width: 2rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.22;
+}
+
+.timecode {
+  opacity: 0.45;
+  letter-spacing: 0.15em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Aside links (e.g. "View all services") */
+.slate a {
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.slate a:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Reveal: labels fade in while the hairline draws across (see MotionProvider) */
+:global(html[data-motion='ready']) .rule {
+  transform-origin: left;
+  transition: transform 1.2s var(--ease-settle) 0.1s;
+}
+
+:global(html[data-motion='ready']) .slate:not([data-inview]) .rule {
+  transform: scaleX(0);
+}
+
+:global(html[data-motion='ready']) .slate > :not(.rule) {
+  transition: opacity 0.8s var(--ease-settle);
+}
+
+:global(html[data-motion='ready']) .slate:not([data-inview]) > :not(.rule) {
+  opacity: 0;
+}
+
+@media (max-width: 560px) {
+  .slate {
+    flex-wrap: wrap;
+    row-gap: 0.75rem;
+  }
+
+  .timecode {
+    display: none;
+  }
+
+  /* Aside links drop to their own line under the label and hairline */
+  .slate a {
+    order: 5;
+    flex-basis: 100%;
+  }
+}

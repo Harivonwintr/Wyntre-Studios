@@ -1,0 +1,203 @@
+/* Same dark ground and tokens as the contact section, so the form reads identically */
+.root {
+  --contact-ink: #f4f1ea;
+  --contact-soft: rgba(244, 241, 234, 0.72);
+  --contact-faint: rgba(244, 241, 234, 0.45);
+  --contact-rule: rgba(244, 241, 234, 0.22);
+  --contact-blue: var(--accent-blue, #0066ff);
+  --contact-wide: 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  --contact-mono: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  --contact-sans: var(--font-inter), system-ui, sans-serif;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  color-scheme: dark;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.6);
+  backdrop-filter: blur(6px) grayscale(0.3);
+  -webkit-backdrop-filter: blur(6px) grayscale(0.3);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(600px, 100%);
+  padding: clamp(1.25rem, 2.5vw, 2.25rem) clamp(16px, 3vw, 3rem) clamp(2rem, 3vw, 3rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #0d0d0d;
+  color: var(--contact-ink);
+  box-shadow: -40px 0 120px rgba(0, 0, 0, 0.55), -1px 0 0 rgba(244, 241, 234, 0.08);
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 241, 234, 0.25) transparent;
+  transform: translateX(100%);
+  /* Leaving: quick and out of the way */
+  transition: transform 0.45s cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+.root[data-open] .backdrop {
+  opacity: 1;
+}
+
+/* Arriving: fast start, soft landing */
+.root[data-open] .panel {
+  transform: none;
+  transition: transform 0.6s var(--ease-settle, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+/* ---------- Top row: slate, rule, close ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.slate {
+  font: 500 11px/1 var(--contact-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--contact-faint);
+}
+
+.rule {
+  flex: 1;
+  height: 1px;
+  background: var(--contact-rule);
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: -0.6rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--contact-ink);
+  cursor: pointer;
+  transition: rotate 0.3s var(--ease-settle, ease);
+}
+
+.close:hover {
+  rotate: 90deg;
+}
+
+.close:focus-visible {
+  outline: 1px solid var(--contact-blue);
+  outline-offset: 2px;
+}
+
+/* ---------- Heading ---------- */
+.head {
+  position: relative;
+  margin: clamp(2.5rem, 5vh, 4rem) 0 clamp(2.25rem, 4vh, 3rem);
+}
+
+.heading {
+  margin: 0;
+  font: 800 clamp(2rem, 3.4vw, 3rem) / 0.95 var(--contact-wide);
+  text-transform: uppercase;
+}
+
+.lede {
+  margin: 1rem 0 0;
+  max-width: 22rem;
+  font: 400 1rem/1.5 var(--contact-sans);
+  color: var(--contact-soft);
+}
+
+/* Sticky note pinned at the foot of the panel, just above the email line */
+.note {
+  position: absolute;
+  bottom: calc(100% + 1.25rem);
+  right: 0.5rem;
+  width: clamp(130px, 10vw, 170px);
+  height: auto;
+  rotate: 4deg;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+
+/* The panel is narrower than the contact column, so labels sit above their inputs */
+.panel :global(form) label:not(:last-of-type) {
+  grid-template-columns: 1fr;
+  row-gap: 0.55rem;
+}
+
+/* ---------- Direct line ---------- */
+.direct {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  position: relative;
+  margin: auto 0 0;
+  padding-top: clamp(2.5rem, 5vh, 4rem);
+  font: 400 0.95rem/1.4 var(--contact-sans);
+}
+
+.directLabel {
+  font: 500 11px/1 var(--contact-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--contact-faint);
+}
+
+.direct a {
+  color: var(--contact-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--contact-rule);
+  text-underline-offset: 0.25em;
+}
+
+.direct a:hover {
+  text-decoration-color: currentColor;
+}
+
+@media (max-width: 600px) {
+  /* No spare room at the foot of the panel on a phone */
+  .note {
+    display: none;
+  }
+}
+
+/* On short screens the form reaches the foot of the panel, so the note would sit on the button */
+@media (max-height: 820px) {
+  .note {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Fade instead of slide */
+  .panel,
+  .root[data-open] .panel {
+    transform: none;
+    transition: opacity 0.2s linear;
+  }
+
+  .panel {
+    opacity: 0;
+  }
+
+  .root[data-open] .panel {
+    opacity: 1;
+  }
+
+  .backdrop {
+    transition-duration: 0.2s;
+  }
+}

@@ -1,0 +1,248 @@
+.player {
+  --player-ink: #f4f1ea;
+  --player-faint: rgba(244, 241, 234, 0.5);
+  --player-mono: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+
+  position: absolute;
+  inset: 0;
+  background: #000;
+  outline: none;
+}
+
+.player:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent-blue, #0066ff);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* Hide the pointer along with the controls while watching */
+.player[data-idle] .video {
+  cursor: none;
+}
+
+.status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font: 500 11px/1 var(--player-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--player-faint);
+  pointer-events: none;
+}
+
+/* ---------- Control bar ---------- */
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 16px 14px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+  transition: opacity 0.35s ease, translate 0.35s ease;
+}
+
+.player[data-idle] .bar {
+  opacity: 0;
+  translate: 0 8px;
+  pointer-events: none;
+}
+
+/* Outlined squares that fill on hover, like the rest of the site */
+.button {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(244, 241, 234, 0.45);
+  background: rgba(13, 13, 13, 0.35);
+  color: var(--player-ink);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.button:hover {
+  border-color: var(--player-ink);
+  background: var(--player-ink);
+  color: #0d0d0d;
+}
+
+.button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.time {
+  font: 500 11px/1 var(--player-mono);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--player-ink);
+}
+
+.time span {
+  color: var(--player-faint);
+}
+
+/* ---------- Hairline scrubber ---------- */
+.scrub {
+  flex: 1;
+  min-width: 0;
+  height: 16px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.scrub:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.scrub::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(to right, var(--player-ink) var(--progress, 0%), rgba(244, 241, 234, 0.25) var(--progress, 0%));
+}
+
+.scrub::-webkit-slider-thumb {
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  border: 0;
+  background: var(--player-ink);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.scrub::-moz-range-track {
+  height: 1px;
+  background: rgba(244, 241, 234, 0.25);
+}
+
+.scrub::-moz-range-progress {
+  height: 1px;
+  background: var(--player-ink);
+}
+
+.scrub::-moz-range-thumb {
+  width: 9px;
+  height: 9px;
+  border: 0;
+  border-radius: 0;
+  background: var(--player-ink);
+}
+
+.scrub:focus-visible {
+  outline: 2px solid var(--accent-blue, #0066ff);
+  outline-offset: 4px;
+}
+
+/* ---------- Volume ---------- */
+.volume {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.level {
+  width: 0;
+  height: 16px;
+  margin: 0;
+  opacity: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: width 0.28s var(--ease-settle, ease), opacity 0.2s ease, margin 0.28s var(--ease-settle, ease);
+}
+
+.volume:hover .level,
+.volume:focus-within .level {
+  width: 68px;
+  margin-left: 12px;
+  opacity: 1;
+}
+
+.level::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(to right, var(--player-ink) var(--progress, 0%), rgba(244, 241, 234, 0.25) var(--progress, 0%));
+}
+
+.level::-webkit-slider-thumb {
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  border: 0;
+  background: var(--player-ink);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.level::-moz-range-track {
+  height: 1px;
+  background: rgba(244, 241, 234, 0.25);
+}
+
+.level::-moz-range-progress {
+  height: 1px;
+  background: var(--player-ink);
+}
+
+.level::-moz-range-thumb {
+  width: 9px;
+  height: 9px;
+  border: 0;
+  border-radius: 0;
+  background: var(--player-ink);
+}
+
+.level:focus-visible {
+  outline: 2px solid var(--accent-blue, #0066ff);
+  outline-offset: 4px;
+}
+
+@media (max-width: 560px) {
+  .bar {
+    gap: 10px;
+    padding: 32px 10px 10px;
+  }
+
+  .button {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Keep the elapsed time; the total fits on the scrubber's length */
+  .time span {
+    display: none;
+  }
+
+  /* No hover on touch, and no room either: the mute button carries volume on its own */
+  .level {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .button,
+  .level {
+    transition: none;
+  }
+}

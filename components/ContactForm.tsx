@@ -1,249 +1,184 @@
 'use client'
 
-import { useState, useRef, FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import OutlineButton from './OutlineButton'
+import styles from './ContactFormFields.module.css'
 
-const FORMPREE_ENDPOINT = 'https://formspree.io/f/mnjawljk'
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mnjawljk'
 
-export default function ContactForm() {
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+type Status = 'idle' | 'sending' | 'success' | 'error'
+
+const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
+// Formspree's upload limit for a whole submission
+const MAX_UPLOAD_MB = 25
+
+type Props = {
+  /** Unique per page: the brief panel renders a second copy alongside the contact section's */
+  id?: string
+}
+
+export default function ContactForm({ id = 'contact-form' }: Props) {
+  const [status, setStatus] = useState<Status>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [files, setFiles] = useState<File[]>([])
+  const [dragging, setDragging] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
-  const validateEmail = (email: string): boolean => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const fail = (message: string) => {
+    setStatus('error')
+    setErrorMessage(message)
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
-    if (!formRef.current) {
-      return
-    }
+    if (!formRef.current) return
 
     const formData = new FormData(formRef.current)
-    const name = formData.get('name')?.toString() || ''
-    const email = formData.get('email')?.toString() || ''
-    const message = formData.get('message')?.toString() || ''
-    const gotcha = formData.get('_gotcha')?.toString() || ''
+    const name = formData.get('name')?.toString().trim() || ''
+    const email = formData.get('email')?.toString().trim() || ''
+    const message = formData.get('message')?.toString().trim() || ''
 
-    // Honeypot check - if filled, silently succeed
-    if (gotcha) {
+    // Honeypot filled in: likely a bot, so pretend it worked
+    if (formData.get('_gotcha')) {
       setStatus('success')
       return
     }
 
-    // Client-side validation
-    if (!name || name.trim() === '') {
-      setStatus('error')
-      setErrorMessage('Name is required.')
-      return
-    }
+    if (!name) return fail('Name is required.')
+    if (!email) return fail('Email is required.')
+    if (!isValidEmail(email)) return fail('Please enter a valid email address.')
+    if (!message) return fail('Tell us a little about the project.')
+    if (message.length < 10) return fail('Message must be at least 10 characters long.')
+    const uploadBytes = files.reduce((total, file) => total + file.size, 0)
+    if (uploadBytes > MAX_UPLOAD_MB * 1024 * 1024) return fail(`Attachments can be up to ${MAX_UPLOAD_MB}MB in total. Send a link instead?`)
 
-    if (!email || email.trim() === '') {
-      setStatus('error')
-      setErrorMessage('Email is required.')
-      return
-    }
-
-    if (!validateEmail(email)) {
-      setStatus('error')
-      setErrorMessage('Please enter a valid email address.')
-      return
-    }
-
-    if (!message || message.trim() === '') {
-      setStatus('error')
-      setErrorMessage('Message is required.')
-      return
-    }
-
-    if (message.trim().length < 10) {
-      setStatus('error')
-      setErrorMessage('Message must be at least 10 characters long.')
-      return
-    }
-
-    // Submit to Formspree
     setStatus('sending')
     setErrorMessage('')
 
     try {
-      const response = await fetch(FORMPREE_ENDPOINT, {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers: { Accept: 'application/json' },
       })
 
-      // Formspree returns 200 OK on success, or 400/422 on validation errors
       if (response.ok) {
-        const data = await response.json().catch(() => ({}))
-        // Formspree success response can be empty or { next: '...' }
         setStatus('success')
-        if (formRef.current) {
-          formRef.current.reset()
-        }
-      } else {
-        // Handle error response
-        try {
-          const data = await response.json()
-          setStatus('error')
-          if (data.errors && Array.isArray(data.errors)) {
-            const errorMessages = data.errors.map((err: { message?: string } | string) => 
-              typeof err === 'string' ? err : err.message || 'Validation error'
-            ).join(', ')
-            setErrorMessage(errorMessages)
-          } else if (data.error) {
-            setErrorMessage(data.error)
-          } else {
-            setErrorMessage('Something went wrong. Try again.')
-          }
-        } catch (parseError) {
-          setStatus('error')
-          setErrorMessage('Something went wrong. Try again.')
-        }
+        formRef.current?.reset()
+        setFiles([])
+        return
       }
-    } catch (error) {
-      setStatus('error')
-      setErrorMessage('Something went wrong. Try again.')
+
+      const data = await response.json().catch(() => ({}))
+      if (Array.isArray(data.errors)) {
+        fail(
+          data.errors
+            .map((err: { message?: string } | string) => (typeof err === 'string' ? err : err.message || 'Validation error'))
+            .join(', ')
+        )
+      } else {
+        fail(data.error || 'Something went wrong. Try again.')
+      }
+    } catch {
+      fail('Something went wrong. Try again.')
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Prevent Enter from submitting unless in textarea
-    if (e.key === 'Enter' && e.currentTarget.tagName !== 'TEXTAREA') {
-      e.preventDefault()
-    }
-  }
-
-  const getButtonText = () => {
-    switch (status) {
-      case 'sending':
-        return 'SENDING…'
-      case 'success':
-        return 'SENT'
-      default:
-        return 'Send Message'
-    }
-  }
+  const busy = status === 'sending' || status === 'success'
 
   return (
-    <>
-      <form 
-        ref={formRef}
-        onSubmit={handleSubmit}
-        id="contact-form"
-        action={FORMPREE_ENDPOINT}
-        method="POST"
-        noValidate
-      >
-        {/* Honeypot field */}
-        <input
-          type="text"
-          name="_gotcha"
-          tabIndex={-1}
-          autoComplete="off"
-          style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
-          aria-hidden="true"
+    <form
+      ref={formRef}
+      id={id}
+      className={styles.form}
+      onSubmit={handleSubmit}
+      action={FORMSPREE_ENDPOINT}
+      method="POST"
+      encType="multipart/form-data"
+      noValidate
+    >
+      <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" className={styles.honeypot} aria-hidden="true" />
+
+      <label className={styles.field}>
+        <span className={styles.label}>Your name</span>
+        <input className={styles.input} type="text" name="name" autoComplete="name" placeholder="Full name" required disabled={busy} />
+      </label>
+
+      <label className={styles.field}>
+        <span className={styles.label}>Email</span>
+        <input className={styles.input} type="email" name="email" autoComplete="email" placeholder="you@company.com" required disabled={busy} />
+      </label>
+
+      <label className={styles.field}>
+        <span className={styles.label}>Company / brand</span>
+        <input className={styles.input} type="text" name="company" autoComplete="organization" disabled={busy} />
+      </label>
+
+      <label className={styles.messageField}>
+        <span className={styles.label}>What are we making?</span>
+        <textarea
+          className={styles.textarea}
+          name="message"
+          rows={4}
+          minLength={10}
+          placeholder="Share a few details..."
+          required
+          disabled={busy}
         />
+      </label>
 
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
+      {/* Optional files: decks, scripts, references. The native input covers the whole zone, so a click opens the picker
+          and a file dragged anywhere onto it drops straight in */}
+      <div className={styles.attach}>
+        <span className={styles.label}>Attachments</span>
+        <label
+          className={styles.attachRow}
+          data-filled={files.length > 0 || undefined}
+          data-dragging={dragging || undefined}
+          onDragEnter={() => setDragging(true)}
+          onDragLeave={(e) => {
+            // Leaving for a child of the zone isn't leaving the zone
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDragging(false)
+          }}
+          onDrop={() => setDragging(false)}
+        >
           <input
-            type="text"
-            id="name"
-            name="name"
-            required
-            disabled={status === 'sending' || status === 'success'}
-            onKeyDown={handleKeyDown}
+            className={styles.fileInput}
+            type="file"
+            name="attachment"
+            multiple
+            disabled={busy}
+            onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
           />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            disabled={status === 'sending' || status === 'success'}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="company">Company</label>
-          <input
-            type="text"
-            id="company"
-            name="company"
-            disabled={status === 'sending' || status === 'success'}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="message">Message</label>
-          <textarea
-            id="message"
-            name="message"
-            rows={5}
-            required
-            minLength={10}
-            disabled={status === 'sending' || status === 'success'}
-          />
-        </div>
-
-        <div style={{ marginTop: '2rem' }}>
-          {status === 'sending' || status === 'success' ? (
-            <button
-              type="button"
-              disabled
-              style={{
-                background: '#0a0b0d',
-                color: '#fff',
-                border: '1px solid #0a0b0d',
-                borderRadius: '4px',
-                padding: '0.75rem 1.5rem',
-                fontSize: '1rem',
-                fontWeight: 600,
-                cursor: 'not-allowed',
-                opacity: 0.7,
-                fontFamily: 'inherit',
-                transition: 'background 0.2s ease, color 0.2s ease'
-              }}
-            >
-              {getButtonText()}
-            </button>
-          ) : (
-            <OutlineButton type="submit">
-              {getButtonText()}
-            </OutlineButton>
-          )}
-        </div>
-      </form>
-
-      {/* Status messages */}
-      <div 
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        style={{ marginTop: '1rem', minHeight: '1.5rem' }}
-      >
-        {status === 'success' && (
-          <p style={{ color: '#0a0b0d', fontSize: '0.875rem', margin: 0, fontStyle: 'italic' }}>
-            Thanks. We'll reply soon.
-          </p>
-        )}
-        {status === 'error' && errorMessage && (
-          <p style={{ color: '#d32f2f', fontSize: '0.875rem', margin: 0 }}>
-            {errorMessage}
-          </p>
-        )}
+          <span className={styles.attachAction} aria-hidden="true">
+            <svg viewBox="0 0 10 10" focusable="false">
+              <path d="M5 0v10M0 5h10" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+          </span>
+          <span className={styles.attachText}>
+            {dragging
+              ? 'Drop to attach'
+              : files.length > 0
+                ? files.map((file) => file.name).join(', ')
+                : 'Drop a deck, script or references, or browse'}
+          </span>
+          <span className={styles.attachHint}>
+            {files.length > 1 ? `${files.length} files` : `Up to ${MAX_UPLOAD_MB}MB`}
+          </span>
+        </label>
       </div>
-    </>
+
+      <div className={styles.actions}>
+        <OutlineButton type="submit" disabled={busy} variant="white">
+          {status === 'sending' ? 'Sending…' : status === 'success' ? 'Sent' : 'Send the brief'}
+        </OutlineButton>
+
+        <div role="status" aria-live="polite" aria-atomic="true">
+          {status === 'success' && <p className={styles.status}>Thanks. We&apos;ll reply soon.</p>}
+          {status === 'error' && errorMessage && <p className={`${styles.status} ${styles.error}`}>{errorMessage}</p>}
+        </div>
+      </div>
+    </form>
   )
 }
-

@@ -1,0 +1,182 @@
+.section {
+  --work-ink: #0d1117;
+  padding-block: clamp(3rem, 6vw, 5.5rem);
+  /* Same gutter as every other section */
+  padding-inline: clamp(16px, 4vw, 64px);
+  background: #fff;
+  color: var(--work-ink);
+  /* Flight pieces grow past the screen edge as they pass the camera. Only the sides are clipped: the opening cards
+     float above the section's top edge while it's still rising in */
+  overflow-x: clip;
+}
+
+.slate,
+.header,
+.board,
+.pagination {
+  max-width: 1600px;
+  margin-inline: auto;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 3.5rem);
+  margin-bottom: clamp(2.5rem, 5vw, 5rem);
+}
+
+.heading {
+  margin: 0;
+  font-family: 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.75rem, 7vw, 7.5rem);
+  line-height: 0.9;
+  white-space: nowrap;
+}
+
+.headingCompact {
+  font-size: clamp(2.25rem, 5vw, 5.75rem);
+}
+
+.intro {
+  justify-self: end;
+  width: 100%;
+  max-width: 48rem;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(13, 17, 23, 0.85);
+}
+
+.intro p {
+  margin: 0;
+}
+
+/* Opening statement: set apart from the supporting line in weight and colour */
+.intro p:first-child {
+  margin-bottom: 0.6rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #0d0d0d;
+}
+
+.cta {
+  margin-top: 1.4rem;
+}
+
+/* The fly-through pins the section as one full screen, so neither neighbour shows while it plays */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .section[data-flight-stage] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    padding-block: clamp(2rem, 4vh, 3.5rem);
+    /* The flight layer spans the whole screen, centred on it */
+    position: relative;
+  }
+
+  /* Auto side margins would otherwise shrink the rows to their content in a flex column */
+  .section[data-flight-stage] > * {
+    width: 100%;
+  }
+
+  /* Heading, board and count all fit one screen: on shorter screens the board narrows to fit the height
+     (it is about 1.6 times as wide as tall; 27rem covers the heading, intro, count and padding) */
+  .section[data-flight-stage] .board,
+  .section[data-flight-stage] .pagination {
+    max-width: min(1600px, calc((100vh - 27rem) * 1.6));
+  }
+
+  .section[data-flight-stage] .header {
+    margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+  }
+}
+
+/* Holds both collages; the sheet behind them is its own layer */
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 1.2% 0 1.5%;
+}
+
+/* One continuous speckled sheet behind both collages; pieces may overhang its edges */
+.sheet {
+  position: absolute;
+  inset: 0;
+  background: #fff url('/assets/work/texture/speckle.webp') center / cover;
+}
+
+/* Flight-only pieces cover the whole section: hidden unless the fly-through is running, and never in the way */
+.flight {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.section[data-flight='live'] .flight {
+  visibility: visible;
+}
+
+.section[data-flight='live'] .sheet,
+.section[data-flight='live'] .flightPiece {
+  will-change: translate, scale, rotate, opacity;
+}
+
+.flightPiece {
+  position: absolute;
+  height: auto;
+  user-select: none;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.2));
+}
+
+/* Film stills read as prints, with a white border */
+.flightStill {
+  padding: 0.6vmin;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  filter: none;
+}
+
+.pagination {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: clamp(2rem, 3.2vw, 3.25rem);
+  /* Same mono label voice as the section slates, so the count reads as a marking, not a headline */
+  font: 500 11px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(13, 13, 13, 0.42);
+}
+
+.pagination span {
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .cta {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 900px) {
+  .board {
+    grid-template-columns: 1fr;
+    row-gap: 3rem;
+    padding: 4% 2%;
+  }
+
+  .pagination {
+    display: none;
+  }
+}

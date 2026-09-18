@@ -16,7 +16,17 @@ export default function ConditionalHero() {
   
   // Scroll to top synchronously before browser paint to prevent bounce
   useLayoutEffect(() => {
-    if (showHero) {
+    if (!showHero) return
+
+    // Nav links skip past the hero: place the page there before paint instead of flashing the top and scrolling down
+    if (sessionStorage.getItem('navScroll')) {
+      const hero = document.getElementById('hero')
+      if (hero) window.scrollTo({ top: hero.offsetTop + hero.offsetHeight - 80, behavior: 'instant' })
+      return
+    }
+
+    // Skip when a hash is present so links like /services#vfx land on their section
+    if (!window.location.hash) {
       // Scroll immediately, before Next.js can restore scroll position
       window.scrollTo(0, 0)
       document.documentElement.scrollTop = 0

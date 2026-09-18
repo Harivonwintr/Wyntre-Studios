@@ -1,0 +1,111 @@
+.headline {
+  min-width: 0;
+  margin: 0;
+  font-family: 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* Starting sizes only; FitLines scales each tier to the column width */
+.lead,
+.hero {
+  display: block;
+  font-size: 2rem;
+}
+
+.lead {
+  line-height: 1.1;
+}
+
+.hero {
+  margin-top: 0.05em;
+  line-height: 1;
+}
+
+.underlined {
+  position: relative;
+  white-space: nowrap;
+}
+
+/* Solid brush stroke in the text colour (blue is kept for the hero); set --underline-offset to move it */
+.underline {
+  position: absolute;
+  left: 3%;
+  right: 8%;
+  bottom: var(--underline-offset, -0.02em);
+  height: 0.09em;
+  background: currentColor;
+  -webkit-mask: url('/assets/brush/cta-ink.webp') center / 100% 100% no-repeat;
+  mask: url('/assets/brush/cta-ink.webp') center / 100% 100% no-repeat;
+}
+
+/* ---------- Cut-in (active once html[data-motion='ready']) ---------- */
+/* Each tier rises out of its own mask, the payoff a beat later, then the brush stroke draws on */
+:global(html[data-motion='ready']) .lead,
+:global(html[data-motion='ready']) .hero {
+  clip-path: inset(-0.2em -0.15em -0.15em -0.15em);
+}
+
+:global(html[data-motion='ready']) .lead > *,
+:global(html[data-motion='ready']) .hero > * {
+  transition: translate 1s var(--ease-settle);
+}
+
+:global(html[data-motion='ready']) .hero > * {
+  transition-delay: 0.12s;
+}
+
+:global(html[data-motion='ready']) .headline:not([data-inview]) .lead > *,
+:global(html[data-motion='ready']) .headline:not([data-inview]) .hero > * {
+  translate: 0 115%;
+}
+
+:global(html[data-motion='ready']) .underline {
+  transform-origin: left;
+  transition: transform 0.8s var(--ease-snap) 0.6s;
+}
+
+:global(html[data-motion='ready']) .headline:not([data-inview]) .underline {
+  transform: scaleX(0);
+}
+
+/* ---------- Accent pop ---------- */
+/* Once the payoff line has risen, the accent punches past full size and settles; the brush stroke waits for it */
+.pop {
+  display: inline-block;
+  transform-origin: 50% 85%;
+}
+
+/* Room for the pop to grow up and sideways; the bottom edge stays tight so the rise-from-below mask still works */
+:global(html[data-motion='ready']) .headline[data-pop] .hero {
+  clip-path: inset(-0.55em -0.4em -0.15em -0.4em);
+}
+
+:global(html[data-motion='ready']) .headline[data-pop][data-inview] .pop {
+  animation: accentPop 0.7s var(--ease-snap, cubic-bezier(0.2, 0.9, 0.3, 1.2)) 0.85s both;
+}
+
+:global(html[data-motion='ready']) .pop .underline {
+  transition-delay: 1.4s;
+}
+
+@keyframes accentPop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  40% {
+    transform: scale(1.24) rotate(-3deg);
+  }
+  68% {
+    transform: scale(0.95) rotate(1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(html[data-motion='ready']) .headline[data-pop][data-inview] .pop {
+    animation: none;
+  }
+}

@@ -1,0 +1,87 @@
+/*
+ * 2.5D motion: useCollageParallax writes --px, --py (pointer) and --scroll (viewport progress) on .collage.
+ * Each piece scales those by its --depth, so foreground scraps travel further than the backing paper.
+ * Tune the feel with the travel variables below.
+ */
+.collage {
+  --px: 0;
+  --py: 0;
+  --scroll: 0;
+  position: relative;
+  width: 100%;
+  perspective: 1400px;
+}
+
+/* The whole board tilts slightly towards the pointer */
+.stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--py) * -3deg)) rotateY(calc(var(--px) * 4deg));
+}
+
+.piece {
+  --travel-x: 18px;
+  --travel-y: 12px;
+  --scroll-travel: 44px;
+  /* Lift follows the stacking order, not the depth: inside preserve-3d the Z position decides what
+     paints in front, so a deep-parallax scrap would otherwise cover pieces above it in the stack. */
+  --lift-step: 4px;
+
+  position: absolute;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18));
+  transform:
+    translate3d(
+      calc(var(--px) * var(--depth) * var(--travel-x)),
+      calc(var(--py) * var(--depth) * var(--travel-y) - var(--scroll) * var(--depth) * var(--scroll-travel)),
+      calc((var(--order) + 1) * var(--lift-step))
+    )
+    rotate(var(--rot))
+    scale(var(--flip-x), var(--flip-y));
+  will-change: transform;
+  transition:
+    opacity 0.7s ease calc(var(--order) * 70ms),
+    translate 1s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--order) * 70ms);
+}
+
+/* Entrance: once motion is ready, pieces wait off the board, then settle one after another, back to front.
+   Without the script the collage simply shows. */
+.collage[data-motion='ready'] .piece {
+  opacity: 0;
+  translate: 0 calc(16px + var(--depth) * 24px);
+}
+
+/* Jump to the waiting state instantly; only the entrance itself animates */
+.collage[data-motion='ready']:not([data-inview]) .piece {
+  transition: none;
+}
+
+.collage[data-motion='ready'][data-inview='true'] .piece {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Masks stretch to the piece box, so a matte always outlines its photo exactly */
+.frame {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    transform: none;
+  }
+
+  .piece,
+  .collage[data-motion='ready'] .piece,
+  .collage[data-motion='ready'][data-inview='true'] .piece {
+    transform: rotate(var(--rot)) scale(var(--flip-x), var(--flip-y));
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+}

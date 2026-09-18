@@ -1,0 +1,196 @@
+.frame {
+  --vf-inset: clamp(10px, 1.8vw, 28px);
+  --vf-size: clamp(18px, 2.4vw, 40px);
+  position: absolute;
+  inset: var(--vf-inset);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.corner {
+  position: absolute;
+  width: var(--vf-size);
+  height: var(--vf-size);
+  border: 0 solid currentColor;
+  opacity: 0.7;
+}
+
+.tl {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.tr {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.br {
+  right: 0;
+  bottom: 0;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+/* Reveal: corners close in from slightly outside, like a frame locking on (see MotionProvider) */
+:global(html[data-motion='ready']) .corner {
+  transition:
+    translate 1s var(--ease-settle),
+    opacity 0.8s var(--ease-settle);
+}
+
+:global(html[data-motion='ready']) .frame:not([data-inview]) .corner {
+  opacity: 0;
+}
+
+:global(html[data-motion='ready']) .frame:not([data-inview]) .tl {
+  translate: -12px -12px;
+}
+
+:global(html[data-motion='ready']) .frame:not([data-inview]) .tr {
+  translate: 12px -12px;
+}
+
+:global(html[data-motion='ready']) .frame:not([data-inview]) .bl {
+  translate: -12px 12px;
+}
+
+:global(html[data-motion='ready']) .frame:not([data-inview]) .br {
+  translate: 12px 12px;
+}
+
+/* ---------- Camera readouts (hud) ---------- */
+/* Small mono labels tucked beside each bracket, level with its outer edge */
+.readout {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  font: 500 10px/1 var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0.72;
+}
+
+.readoutTl,
+.readoutBl {
+  left: calc(var(--vf-size) + 12px);
+}
+
+.readoutTr,
+.readoutBr {
+  right: calc(var(--vf-size) + 12px);
+}
+
+.readoutTl,
+.readoutTr {
+  top: -0.35em;
+}
+
+.readoutBl,
+.readoutBr {
+  bottom: -0.35em;
+}
+
+.rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+}
+
+/* The one spot of red: a camera's record light */
+.rec::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff3b30;
+  animation: recBlink 1.6s steps(1, end) infinite;
+}
+
+.timecode {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
+
+@keyframes recBlink {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  61%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+/* Faint centre cross, like a monitor's frame guide */
+.cross {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  translate: -50% -50%;
+  opacity: 0.35;
+}
+
+.cross::before,
+.cross::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+
+.cross::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.cross::after {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+/* Readouts arrive with the corners */
+:global(html[data-motion='ready']) .readout,
+:global(html[data-motion='ready']) .cross {
+  transition: opacity 0.9s var(--ease-settle) 0.35s;
+}
+
+:global(html[data-motion='ready']) .frame:not([data-inview]) .readout,
+:global(html[data-motion='ready']) .frame:not([data-inview]) .cross {
+  opacity: 0;
+}
+
+/* On a phone, keep only the record light and timecode */
+@media (max-width: 640px) {
+  .readoutTr,
+  .readoutBl,
+  .readoutBr,
+  .cross {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rec::before {
+    animation: none;
+  }
+}

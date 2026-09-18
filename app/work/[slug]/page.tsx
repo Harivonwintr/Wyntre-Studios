@@ -1,68 +1,42 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Footer from '@/components/Footer'
 import CaseStudyModal from '@/components/CaseStudyModal'
-import { workItems, getWorkItemBySlug } from '@/data/workItems'
-import { caseStudyItems } from '@/data/caseStudyItems'
+import { getWorkItemBySlug } from '@/data/workItems'
+import { getCampaignRangeModalItems } from '@/utils/campaignUtils'
+
+// Case studies have dedicated pages; every other work item opens in the campaign modal
+const caseStudyRoutes: Record<string, string> = {
+  'nivea-global-campaign-infrastructure': '/work/nivea',
+  'nestle-product-textures': '/work/nescafe',
+}
 
 export default function WorkItemPage() {
   const params = useParams()
   const router = useRouter()
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug || ''
-  const [isModalOpen, setIsModalOpen] = useState(true)
-  const [selectedIndex, setSelectedIndex] = useState(0)
 
   const item = getWorkItemBySlug(slug)
+  const modalItems = getCampaignRangeModalItems()
+  // Match on the original image: the modal items now show live Stream posters
+  const modalIndex = item
+    ? modalItems.findIndex((modalItem) => (modalItem.stillUrl ?? modalItem.posterUrl) === item.posterUrl)
+    : -1
+  const redirectTo = caseStudyRoutes[slug] ?? (modalIndex < 0 ? '/work' : null)
 
   useEffect(() => {
-    if (!item) {
-      router.push('/work')
-      return
-    }
+    if (redirectTo) router.replace(redirectTo)
+  }, [redirectTo, router])
 
-    // Find matching case study item
-    const normalize = (str: string) => str.toLowerCase().replace(/\s*&\s*/g, ' and ').trim()
-    const index = caseStudyItems.findIndex(
-      (csItem) =>
-        csItem.client.toLowerCase() === item.client.toLowerCase() &&
-        normalize(csItem.campaign) === normalize(item.campaign)
-    )
-
-    if (index >= 0) {
-      setSelectedIndex(index)
-    } else {
-      // If no matching case study found, redirect to work page
-      router.push('/work')
-    }
-  }, [item, router])
-
-  if (!item) {
-    return null
-  }
-
-  const handleClose = () => {
-    setIsModalOpen(false)
-    router.push('/work')
-  }
+  if (redirectTo) return null
 
   return (
-    <>
-      <div style={{ minHeight: '100vh', paddingTop: '120px' }}>
-        <div className="container">
-          <h1>{item.client} | {item.campaign}</h1>
-          <p>Redirecting to modal...</p>
-        </div>
-      </div>
-      <CaseStudyModal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        items={caseStudyItems}
-        initialIndex={selectedIndex}
-      />
-      <Footer />
-    </>
+    <CaseStudyModal
+      isOpen
+      onClose={() => router.push('/work#campaign-range')}
+      items={modalItems}
+      initialIndex={modalIndex}
+    />
   )
 }
-

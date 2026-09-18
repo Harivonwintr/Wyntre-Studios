@@ -1,0 +1,236 @@
+.card {
+  --collage-ink: #0d1117;
+  --collage-display: 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  --collage-condensed: var(--font-oswald), 'Oswald', 'Arial Narrow', sans-serif;
+  min-width: 0;
+  color: var(--collage-ink);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Sized by aspect-ratio, so container units scale every piece and all type with the card */
+.canvas {
+  position: relative;
+  width: 100%;
+  container-type: size;
+}
+
+/*
+ * 2.5D motion, shared with the What Drives Us collage: useCollageParallax writes --px, --py and --scroll on
+ * .canvas and each element scales them by its --depth. No preserve-3d, so the Hard Light textures keep blending.
+ */
+.canvas {
+  --px: 0;
+  --py: 0;
+  --scroll: 0;
+  perspective: 1600px;
+}
+
+/* The pictures tilt towards the pointer, like the What Drives Us board */
+.stage {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(calc(var(--py) * -3deg)) rotateY(calc(var(--px) * 4deg));
+}
+
+/* Type and the button live here instead, so the tilt never carries them */
+.textLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.motion {
+  --travel-x: 1.8cqw;
+  --travel-y: 1.2cqw;
+  --scroll-travel: 4cqw;
+  transform:
+    translate(
+      calc(var(--px) * var(--depth) * var(--travel-x)),
+      calc(var(--py) * var(--depth) * var(--travel-y) - var(--scroll) * var(--depth) * var(--scroll-travel))
+    )
+    rotate(var(--rot));
+  /* The stage's 3D tilt used to promote these to their own layers; without it they repaint every frame */
+  will-change: transform;
+  transition:
+    opacity 0.7s ease calc(var(--order) * 60ms),
+    translate 1s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--order) * 60ms);
+}
+
+/* During the Our Work fly-through, scroll drives every piece directly */
+:global([data-flight='live']) .motion {
+  transition: none;
+  will-change: translate, scale, rotate, opacity;
+}
+
+/* Entrance: once motion is ready, pieces wait just below and settle in order; without the script they just show */
+.canvas[data-motion='ready'] .motion {
+  opacity: 0;
+  translate: 0 calc(1.5cqw + var(--depth) * 3cqw);
+}
+
+.canvas[data-motion='ready']:not([data-inview]) .motion {
+  transition: none;
+}
+
+.canvas[data-motion='ready'][data-inview='true'] .motion {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    transform: none;
+  }
+
+  .motion,
+  .canvas[data-motion='ready'] .motion,
+  .canvas[data-motion='ready'][data-inview='true'] .motion {
+    transform: rotate(var(--rot));
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+}
+
+.piece {
+  position: absolute;
+  isolation: isolate;
+  filter: drop-shadow(0 0.5cqw 0.8cqw rgba(0, 0, 0, 0.18));
+}
+
+/* The paper's transparency cuts the photo to its torn edge */
+.photoMask {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.photo {
+  object-fit: cover;
+}
+
+.paper,
+.texture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Same paper laid back over the photo, matching the Hard Light blend used in Figma */
+.texture {
+  mix-blend-mode: hard-light;
+}
+
+.highlights {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  list-style: none;
+  font-family: var(--collage-condensed);
+  font-size: 2.7cqw;
+  line-height: 1.22;
+  white-space: nowrap;
+}
+
+/* Centres the list as a block while its lines stay left-aligned with each other */
+.highlightsCentered {
+  display: grid;
+  place-content: center;
+}
+
+.brand {
+  position: absolute;
+}
+
+.fitText {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: var(--collage-ink);
+  font-family: var(--collage-display);
+  font-weight: 800;
+}
+
+.number {
+  position: absolute;
+  font-family: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 3.4cqw;
+  line-height: 1;
+}
+
+.titleBox {
+  position: absolute;
+}
+
+/* Starting size only; FitLines scales it so the widest line fills the box */
+.title {
+  margin: 0;
+  font-family: var(--collage-condensed);
+  font-weight: 300;
+  font-size: 9cqw;
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+.cta {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1cqw;
+  padding: 0 1.6cqw 0 2.2cqw;
+  white-space: nowrap;
+  border: 0.25cqw solid var(--collage-ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 1.75cqw;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--collage-ink);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cta:hover {
+  background: var(--collage-ink);
+  color: #fff;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--collage-ink);
+  outline-offset: 3px;
+}
+
+.ctaArrow {
+  width: 2.2cqw;
+  height: 2.2cqw;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
+  }
+}

@@ -15,6 +15,8 @@ export function useTiltCard() {
     const cards = document.querySelectorAll('.tilt-card')
     if (!cards.length) return
 
+    const cleanups: Array<() => void> = []
+
     cards.forEach(card => {
       const grid = card.closest('.campaign-grid') || card.closest('.cs-grid')
       let rect: DOMRect | null = null
@@ -63,12 +65,15 @@ export function useTiltCard() {
       card.addEventListener('mousemove', onMove as EventListener)
       card.addEventListener('mouseleave', onLeave)
 
-      return () => {
+      cleanups.push(() => {
+        if (raf) cancelAnimationFrame(raf)
         card.removeEventListener('mouseenter', onEnter)
         card.removeEventListener('mousemove', onMove)
         card.removeEventListener('mouseleave', onLeave)
-      }
+      })
     })
+
+    return () => cleanups.forEach(cleanup => cleanup())
   }, [])
 }
 

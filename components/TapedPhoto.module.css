@@ -1,0 +1,69 @@
+.print {
+  position: relative;
+  max-width: 100%;
+  margin: 0;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #161616;
+  box-shadow:
+    0 0 0 clamp(5px, 0.45vw, 8px) #f4f1ea,
+    0 16px 36px rgba(0, 0, 0, 0.28);
+}
+
+.image {
+  object-fit: cover;
+}
+
+.paper .frame {
+  background: #f4f1ea url('/assets/work/texture/speckle.webp') center / cover;
+}
+
+.grayscale .image {
+  filter: grayscale(1) contrast(1.05);
+}
+
+.tape {
+  position: absolute;
+  z-index: 2;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.tapeTop {
+  top: -5%;
+  left: 50%;
+  width: 36%;
+  transform: translateX(-50%) rotate(-3deg);
+}
+
+/* Diagonal strips across opposite corners, as on the Our Work board */
+.tapeStart,
+.tapeEnd {
+  width: 24%;
+}
+
+.tapeStart {
+  top: -4%;
+  left: -6%;
+  transform: rotate(-35deg);
+}
+
+.tapeEnd {
+  right: -6%;
+  bottom: -4%;
+  transform: rotate(-35deg) scaleX(-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .print {
+    transition: none;
+  }
+}
