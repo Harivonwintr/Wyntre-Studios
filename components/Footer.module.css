@@ -117,8 +117,19 @@
 }
 
 @media (max-width: 640px) {
+  /* One column on a phone, so everything sits on the centre line under the logo */
+  .columns {
+    text-align: center;
+  }
+
+  .list {
+    justify-items: center;
+  }
+
   .meta {
     flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 }
 

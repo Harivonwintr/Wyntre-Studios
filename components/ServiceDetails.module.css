@@ -415,7 +415,11 @@
   .indexList {
     display: flex;
     gap: 1.25rem;
+    /* Sideways only: a sideways scroller can also scroll vertically, and the 1px active marker gave it just enough
+       height to wobble up and down under a finger and bounce while the page scrolled */
     overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
     border-left: 0;
     scrollbar-width: none;
   }
@@ -435,7 +439,7 @@
     top: auto;
     left: 0;
     right: 0;
-    bottom: -1px;
+    bottom: 0;
     width: auto;
     height: 2px;
     transform: scaleX(0);

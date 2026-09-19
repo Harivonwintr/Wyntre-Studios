@@ -271,6 +271,11 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
+/* The phone menu's own button for the Work sections; the desktop menu opens on hover instead */
+.dropdown-toggle {
+  display: none;
+}
+
 .dropdown-arrow {
   display: inline-flex;
   transition: transform .3s ease;
@@ -3405,8 +3410,45 @@ a.cs-card:hover .card-title {
     color: #f4f1ea;
   }
 
-  .dropdown-arrow {
-    margin-left: auto;
+  /* The Work link just navigates here; the arrow button beside it opens the sections */
+  .nav-link .dropdown-arrow {
+    display: none;
+  }
+
+  .nav-dropdown {
+    position: relative;
+  }
+
+  /* Sits over the right end of the Work row, a full-height tap target */
+  .dropdown-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: calc(36px + 18px);
+    padding: 0;
+    border: 0;
+    border-left: 1px solid rgba(244, 241, 234, 0.1);
+    background: transparent;
+    color: rgba(244, 241, 234, 0.65);
+    cursor: pointer;
+  }
+
+  .dropdown-toggle svg {
+    width: 11px;
+    height: 7px;
+    transition: transform 0.3s ease;
+  }
+
+  .dropdown-toggle.is-open svg {
+    transform: rotate(180deg);
+  }
+
+  .dropdown-toggle:focus-visible {
+    outline: 2px solid #f4f1ea;
+    outline-offset: -4px;
   }
 }
 
@@ -4826,5 +4868,25 @@ a.cs-card:hover .card-title {
   #campaign-range .btn-link:hover {
     background: inherit !important;
     color: inherit !important;
+  }
+}
+/* ---------- Match cuts between pages (utils/matchCut) ---------- */
+/* The element carrying across (a collage, a story print) travels with a cut-like ease: a quick start, a long settle */
+::view-transition-group(*) {
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.15, 1);
+}
+
+/* Everything else crossfades underneath, quicker, so the travelling piece reads as the cut */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
   }
 }

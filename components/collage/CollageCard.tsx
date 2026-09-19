@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
+import MatchCutLink from '@/components/MatchCutLink'
+import { matchCutName } from '@/utils/matchCut'
 import { useRef, type CSSProperties } from 'react'
 import { useCollageParallax } from '@/hooks/useCollageParallax'
 import type { FeaturedWork } from '@/data/featuredWork'
@@ -96,7 +97,18 @@ export default function CollageCard({ work, index, hideCta = false }: Props) {
         {work.brand}: {work.title}
       </h3>
 
-      <div ref={canvasRef} className={styles.canvas} style={{ aspectRatio: layout.aspectRatio }}>
+      {/* On the case study page (no link) the collage is the match cut's landing spot, so it's always named;
+          elsewhere it's named only when its link is clicked, so the other collage doesn't lift out too */}
+      <div
+        ref={canvasRef}
+        className={styles.canvas}
+        style={
+          {
+            aspectRatio: layout.aspectRatio,
+            viewTransitionName: hideCta ? matchCutName('collage', work.slug) : undefined,
+          } as CSSProperties
+        }
+      >
         {/* Pictures tilt towards the pointer; the type sits in its own flat layer above so it stays readable */}
         <div className={styles.stage}>
         {layout.pieces.map((piece, i) => {
@@ -188,9 +200,11 @@ export default function CollageCard({ work, index, hideCta = false }: Props) {
             case 'cta':
               if (hideCta) return null
               return (
-                <Link
+                <MatchCutLink
                   key={i}
                   href={work.href}
+                  matchName={matchCutName('collage', work.slug)}
+                  matchTarget={() => canvasRef.current}
                   className={`${styles.cta} ${styles.motion}`}
                   style={boxStyle(piece, i)}
                   {...flyProps(piece)}
@@ -198,7 +212,7 @@ export default function CollageCard({ work, index, hideCta = false }: Props) {
                 >
                   View case study
                   <ArrowUpRight className={styles.ctaArrow} />
-                </Link>
+                </MatchCutLink>
               )
             }
           })}

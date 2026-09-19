@@ -1,9 +1,10 @@
 import type { CSSProperties } from 'react'
-import Link from 'next/link'
+import MatchCutLink from './MatchCutLink'
 import SectionSlate from './SectionSlate'
 import TapedPhoto from './TapedPhoto'
 import TwoTierHeadline from './TwoTierHeadline'
 import { stories } from '@/data/stories'
+import { matchCutName } from '@/utils/matchCut'
 import styles from './RescueStories.module.css'
 
 const TILTS = [-2, 1.5, -1]
@@ -34,7 +35,12 @@ export default function RescueStories({ id = 'rescue-stories', index = '[04]' }:
               data-reveal="up"
               style={{ '--reveal-delay': `${i * 110}ms` } as CSSProperties}
             >
-              <Link href={`/stories/${story.slug}`} className={styles.link}>
+              <MatchCutLink
+                href={`/stories/${story.slug}`}
+                className={styles.link}
+                matchName={matchCutName('story', story.slug)}
+                matchSelector="figure"
+              >
                 <TapedPhoto
                   src={story.image}
                   alt={story.imageAlt}
@@ -51,7 +57,7 @@ export default function RescueStories({ id = 'rescue-stories', index = '[04]' }:
                   <h3 className={styles.client}>{story.client}</h3>
                   <p className={styles.campaign}>{story.campaign}</p>
                 </div>
-              </Link>
+              </MatchCutLink>
             </li>
           ))}
         </ul>

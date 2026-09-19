@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
@@ -8,6 +9,7 @@ import TwoTierHeadline from '@/components/TwoTierHeadline'
 import CampaignPlayer from '@/components/campaign/CampaignPlayer'
 import StorySeries from '@/components/StorySeries'
 import { getNextStory, isPlaceholder, stories, type Story } from '@/data/stories'
+import { matchCutName } from '@/utils/matchCut'
 import styles from './StoryArticle.module.css'
 
 const pad = (n: number) => String(n).padStart(2, '0')
@@ -64,6 +66,8 @@ export default function StoryArticle({ story }: { story: Story }) {
                 rotate={2}
                 aspect="1 / 1"
                 sizes="(max-width: 900px) 90vw, 40vw"
+                // Same name as the print on the Work page, so it carries across as a match cut
+                style={{ viewTransitionName: matchCutName('story', story.slug) } as CSSProperties}
               />
             </div>
           </div>

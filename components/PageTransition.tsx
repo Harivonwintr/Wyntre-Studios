@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import { usePathname } from 'next/navigation'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { syncSmoothScroll } from '@/utils/smoothScroll'
+import { MATCH_CUT_ATTR, matchCutRouteRendered } from '@/utils/matchCut'
 import styles from './PageTransition.module.css'
 
 type Variant = 'none' | 'fade'
@@ -46,7 +47,11 @@ export default function PageTransition({ children }: { children: ReactNode }) {
     sessionStorage.removeItem('navigatingToCaseStudy')
     sessionStorage.removeItem('isBackNavigation')
 
-    setVariant('fade')
+    // A match cut animates the change itself; the fade would play on top of it
+    const matchCut = document.documentElement.hasAttribute(MATCH_CUT_ATTR)
+    setVariant(matchCut ? 'none' : 'fade')
+    // Lets a running match cut take its snapshot of the new page (after the scroll below, which runs first)
+    matchCutRouteRendered()
 
     const isBack = backFlag || (isCaseStudy(prevPath) && !isCaseStudy(pathname) && !toCaseStudy)
     const fromHistory = fromHistoryRef.current

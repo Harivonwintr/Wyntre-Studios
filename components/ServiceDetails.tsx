@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, type CSSProperties, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import SectionSlate from './SectionSlate'
@@ -140,6 +140,17 @@ export default function ServiceDetails({ index = '[02]' }: Props) {
     }
   }, [])
 
+  // On phones the index is a sideways tab row: keep the current discipline in view by sliding the row itself
+  // (never the page)
+  const listRef = useRef<HTMLOListElement>(null)
+  useEffect(() => {
+    const list = listRef.current
+    if (!list || list.scrollWidth <= list.clientWidth) return
+    const tab = list.children[active] as HTMLElement | undefined
+    if (!tab) return
+    list.scrollTo({ left: tab.offsetLeft - 16, behavior: 'smooth' })
+  }, [active])
+
   const jumpTo = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
     const target = document.getElementById(id)
     if (!target) return
@@ -155,7 +166,7 @@ export default function ServiceDetails({ index = '[02]' }: Props) {
 
         <div className={styles.layout}>
           <nav className={styles.index} aria-label="Jump to a discipline">
-            <ol className={styles.indexList}>
+            <ol ref={listRef} className={styles.indexList}>
               {SERVICES.map((service, i) => (
                 <li key={service.id}>
                   <a

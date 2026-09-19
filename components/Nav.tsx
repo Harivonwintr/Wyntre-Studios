@@ -136,20 +136,6 @@ export default function Nav() {
     }
   }
 
-  const handleWorkClick = (e: React.MouseEvent) => {
-    // Only prevent default on mobile (when menu is open)
-    if (isMenuOpen) {
-      e.preventDefault()
-      setIsWorkDropdownOpen(!isWorkDropdownOpen)
-      return
-    }
-    
-    // If clicking Work link and already on work page, scroll to content
-    if (pathname === '/work' || isCaseStudyPage) {
-      e.preventDefault()
-      scrollToContent('/work', true)
-    }
-  }
 
   const handleLinkClick = (e: React.MouseEvent, targetPath: string) => {
     setIsMenuOpen(false)
@@ -222,13 +208,8 @@ export default function Nav() {
               <Link
                 href="/work"
                 className={`nav-link ${pathname === '/work' || isCaseStudyPage ? 'active' : ''}`}
-                onClick={(e) => {
-                  if (!isMenuOpen) {
-                    handleLinkClick(e, '/work')
-                  } else {
-                    handleWorkClick(e)
-                  }
-                }}
+                // Work goes to the Work page everywhere; in the phone menu its sections open from the arrow beside it
+                onClick={(e) => handleLinkClick(e, '/work')}
                 scroll={false}
               >
                 Work
@@ -238,6 +219,18 @@ export default function Nav() {
                   </svg>
                 </span>
               </Link>
+              {/* Phone menu only: opens the Work sections without leaving the page */}
+              <button
+                type="button"
+                className={`dropdown-toggle ${isWorkDropdownOpen ? 'is-open' : ''}`}
+                aria-expanded={isWorkDropdownOpen}
+                aria-label={isWorkDropdownOpen ? 'Hide Work sections' : 'Show Work sections'}
+                onClick={() => setIsWorkDropdownOpen((open) => !open)}
+              >
+                <svg viewBox="0 0 10 6" focusable="false" aria-hidden="true">
+                  <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              </button>
               <div className={`dropdown-menu ${isWorkDropdownOpen ? 'is-open' : ''}`}>
                 {WORK_SECTIONS.map((section, i) => (
                   <Fragment key={section.id}>
