@@ -23,25 +23,19 @@ export default function Hero() {
 
   // The load sequence waits for the page to finish hydrating and for the headline font to be ready, so the headline
   // neither stutters under that work nor rises in the fallback face and then jumps to Monument. Capped at 1.2s so a
-  // slow or missing font never holds the hero back. The background film starts once the headline has landed, so its
-  // decoding doesn't land mid-animation either.
+  // slow or missing font never holds the hero back. The film doesn't wait: it autoplays straight away, so the hero
+  // is moving from the first moment rather than sitting on its poster.
   const [introReady, setIntroReady] = useState(false)
 
   useEffect(() => {
     // Set once the sequence has started, or once the component has gone
     let settled = false
     let frame = 0
-    let timer: ReturnType<typeof setTimeout> | undefined
 
     const play = () => {
       if (settled) return
       settled = true
-      frame = requestAnimationFrame(() => {
-        setIntroReady(true)
-        // play() also starts the download; there's no autoPlay attribute, which would start it straight away and
-        // then get cut off and restarted when this ran
-        timer = setTimeout(() => videoRef.current?.play().catch(() => {}), 1500)
-      })
+      frame = requestAnimationFrame(() => setIntroReady(true))
     }
 
     document.fonts.load("800 1em 'Monument Extended Ultrabold Local'").then(play, play)
@@ -51,7 +45,6 @@ export default function Hero() {
       settled = true
       clearTimeout(cap)
       cancelAnimationFrame(frame)
-      if (timer) clearTimeout(timer)
     }
   }, [])
 
@@ -61,8 +54,7 @@ export default function Hero() {
     if (!video || typeof IntersectionObserver === 'undefined') return
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) video.pause()
-      // Only resume a film that has started; before that the intro's timer starts it
-      else if (video.currentTime > 0 && video.paused) video.play().catch(() => {})
+      else if (video.paused) video.play().catch(() => {})
     })
     observer.observe(video)
     return () => observer.disconnect()
@@ -89,14 +81,15 @@ export default function Hero() {
 
   return (
     <section id="hero" className={styles.hero} data-intro={introReady ? 'play' : undefined}>
-      {/* 720p loop (about 3MB); the poster, its first frame, shows straight away so the hero is never blank */}
+      {/* 720p loop (about 3MB) that plays as soon as it can; the poster, its first frame, covers the moment before */}
       <video
         ref={videoRef}
         className={styles.media}
+        autoPlay
         loop
         muted
         playsInline
-        preload="none"
+        preload="auto"
         poster="/assets/hero-poster.jpg"
       >
         <source src="/assets/hero-loop.mp4" type="video/mp4" />
