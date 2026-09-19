@@ -110,6 +110,15 @@
   z-index: 30;
   pointer-events: none;
   visibility: hidden;
+  /* Hidden pieces still take up room: clipped to the section, so none of them lengthens the page past the footer */
+  overflow: clip;
+}
+
+/* No fly-through on phones and tablets, so the pieces aren't laid out at all */
+@media (max-width: 900px) {
+  .flight {
+    display: none;
+  }
 }
 
 .section[data-flight='live'] .flight {
@@ -158,6 +167,11 @@
   }
 
   .cta {
+    justify-self: start;
+  }
+
+  /* Stacked under the heading, the intro lines up with it rather than keeping its right-hand seat */
+  .intro {
     justify-self: start;
   }
 }

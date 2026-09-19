@@ -38,10 +38,16 @@
     )
     rotate(var(--rot))
     scale(var(--flip-x), var(--flip-y));
-  will-change: transform;
   transition:
     opacity 0.7s ease calc(var(--order) * 70ms),
     translate 1s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--order) * 70ms);
+}
+
+/* Layers only where the pointer moves the pieces; on touch screens they sit still */
+@media (hover: hover) and (pointer: fine) {
+  .piece {
+    will-change: transform;
+  }
 }
 
 /* Entrance: once motion is ready, pieces wait off the board, then settle one after another, back to front.

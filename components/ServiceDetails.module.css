@@ -376,17 +376,22 @@
 }
 
 @media (max-width: 620px) {
-  /* The note would cover the picture at this width */
-  .note {
-    position: static;
-    display: block;
-    width: min(200px, 60%);
-    margin: 1.25rem 0 0 auto;
+  /* The card fills the screen here, so the torn film edge and the tape only crowd it */
+  .filmEdge,
+  .tape {
+    display: none;
   }
 
-  .tape {
-    top: 18%;
-    left: -2.2rem;
+  /* A small sticky on the card's bottom corner, hanging below it rather than over the picture */
+  .note {
+    right: -0.25rem;
+    bottom: -2.4rem;
+    width: 116px;
+  }
+
+  /* Room for the note to hang into before the task list starts */
+  .frame {
+    margin-bottom: 1.5rem;
   }
 }
 

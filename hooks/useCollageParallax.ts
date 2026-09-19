@@ -82,8 +82,10 @@ export function useCollageParallax(ref: RefObject<HTMLElement>) {
       if (on === listening) return
       listening = on
       const method = on ? 'addEventListener' : 'removeEventListener'
-      window[method]('scroll', onScroll, { passive: true } as AddEventListenerOptions)
+      // Scroll and pointer depth only where there's a mouse or trackpad. On touch screens recomputing every masked,
+      // shadowed piece on each scroll frame cost more than the drift was worth, so the collage just sits still.
       if (finePointer) {
+        window[method]('scroll', onScroll, { passive: true } as AddEventListenerOptions)
         window[method]('pointermove', onPointerMove as EventListener, { passive: true } as AddEventListenerOptions)
         document.documentElement[method]('pointerleave', onPointerLeave)
       }
@@ -93,7 +95,7 @@ export function useCollageParallax(ref: RefObject<HTMLElement>) {
       ([entry]) => {
         if (entry.isIntersecting) {
           el.dataset.inview = 'true'
-          onScroll()
+          if (finePointer) onScroll()
         }
         listen(entry.isIntersecting)
       },

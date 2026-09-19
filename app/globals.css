@@ -170,9 +170,9 @@ h1, h2, h3, h4, h5, h6 {
 .nav-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  /* Solid dim rather than a blur: blurring the whole page (and the hero film playing under it) every frame made
+     opening the menu stutter on phones */
+  background: rgba(0, 0, 0, 0.72);
   z-index: 999;
   display: none;
   will-change: opacity;
@@ -4749,12 +4749,8 @@ a.cs-card:hover .card-title {
     transform: none !important;
   }
   
-  .nav-dropdown:hover .dropdown-menu {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-  
+  /* The drawer's Work submenu opens by tap, not hover: no hover rule here, because a tap leaves the row
+     "hovered" on touch screens and hiding the submenu then left an empty gap until the hover cleared */
   .dropdown-menu a:hover {
     background: transparent !important;
     color: inherit !important;

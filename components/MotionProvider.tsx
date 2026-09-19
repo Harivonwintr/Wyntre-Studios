@@ -25,15 +25,23 @@ export default function MotionProvider() {
 
     gsap.registerPlugin(ScrollTrigger)
 
-    const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    })
+    // Smooth scrolling only for mouse wheels. Mac trackpads and touch screens already glide natively; easing them a
+    // second time made the page trail behind the fingers, which reads as input lag.
+    const nativeGlide =
+      /Mac|iPhone|iPad|iPod/.test(navigator.platform) || window.matchMedia('(pointer: coarse)').matches
+    const lenis = nativeGlide
+      ? null
+      : new Lenis({
+          duration: 1.1,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        })
     registerLenis(lenis)
-    lenis.on('scroll', ScrollTrigger.update)
-    const tick = (time: number) => lenis.raf(time * 1000)
-    gsap.ticker.add(tick)
-    gsap.ticker.lagSmoothing(0)
+    const tick = (time: number) => lenis?.raf(time * 1000)
+    if (lenis) {
+      lenis.on('scroll', ScrollTrigger.update)
+      gsap.ticker.add(tick)
+      gsap.ticker.lagSmoothing(0)
+    }
 
     // Reveal once, then stop watching
     const io = new IntersectionObserver(
@@ -80,7 +88,7 @@ export default function MotionProvider() {
       lastHeight = height
       // Lenis caps scrolling at the page height it last measured; re-read it straight away so content that
       // expands (Show all in the film library, for one) can always be scrolled to the end
-      lenis.resize()
+      lenis?.resize()
       clearTimeout(refreshTimer)
       refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200)
     })
@@ -88,6 +96,7 @@ export default function MotionProvider() {
 
     // The nav drawer and modals lock the page with body overflow; pause smooth scrolling while they're open
     const lock = new MutationObserver(() => {
+      if (!lenis) return
       if (document.body.style.overflow === 'hidden') lenis.stop()
       else lenis.start()
     })
@@ -101,7 +110,7 @@ export default function MotionProvider() {
       lock.disconnect()
       gsap.ticker.remove(tick)
       registerLenis(null)
-      lenis.destroy()
+      lenis?.destroy()
     }
   }, [])
 

@@ -13,7 +13,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
 // The web the camera flies through: client feedback, film stills and tape, only seen during the flight.
 // Listed in the order they appear; the last ones pass just before the board lands
 const FLIGHT_SOURCES: { src: string; kind: 'note' | 'still' | 'tape' }[] = [
-  { src: '/assets/notes/make-it-pop.webp', kind: 'note' },
+  { src: '/assets/notes/back-to-version-3.webp', kind: 'note' },
   { src: '/assets/notes/logo-bigger.webp', kind: 'note' },
   { src: '/assets/work/library/espresso-martini-still.webp', kind: 'still' },
   { src: '/assets/notes/more-energy.webp', kind: 'note' },
@@ -44,7 +44,8 @@ const FLIGHT_SOURCES: { src: string; kind: 'note' | 'still' | 'tape' }[] = [
   { src: '/assets/notes/more-cinematic.webp', kind: 'note' },
   { src: '/assets/work/library/cellular-epigenetics-still.webp', kind: 'still' },
   { src: '/assets/notes/almost-there.webp', kind: 'note' },
-  { src: '/assets/notes/back-to-version-3.webp', kind: 'note' },
+  // The last note to pass before the board lands, so it's the one that sticks
+  { src: '/assets/notes/make-it-pop.webp', kind: 'note' },
 ]
 
 // Sizes in vmin, so the web fills any screen shape the same way
@@ -55,7 +56,7 @@ const WIDTH = { note: 17, still: 26, tape: 13 }
 // the distance as the camera closes in, so the web gets busier the nearer you get. Offsets are in vmin from the
 // middle of the section; size scales the piece's usual width.
 const OPENING: { x: number; y: number; size: number }[] = [
-  { x: -54, y: -40, size: 1.5 }, // make it pop
+  { x: -54, y: -40, size: 1.5 }, // back to version 3
   { x: 36, y: -44, size: 1.3 }, // logo bigger
   { x: -44, y: 14, size: 1.35 }, // espresso martini still
   { x: 6, y: -14, size: 1.1 }, // more energy

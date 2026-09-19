@@ -572,6 +572,15 @@ div.bentoSlate {
   .timeline {
     width: 100%;
   }
+
+  /* The title fills the card's width here, so the note moves up onto the corner of the still */
+  .noteEditing {
+    top: 1.25rem;
+    right: 1rem;
+    bottom: auto;
+    width: 118px;
+    rotate: 5deg;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

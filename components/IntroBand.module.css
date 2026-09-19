@@ -35,6 +35,12 @@
   text-align: center;
 }
 
+/* Centring shrinks the headline to its own width, so it would fit its lines to itself and run off the screen;
+   it takes the full column and centres its lines inside instead */
+.stacked > h2 {
+  width: 100%;
+}
+
 .stacked .intro {
   align-items: center;
   margin-top: clamp(1.5rem, 2.5vw, 2.25rem);

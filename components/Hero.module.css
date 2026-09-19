@@ -121,16 +121,18 @@
   background: var(--hero-faint);
 }
 
-/* "PERFECTED." is about 8.3em wide in Monument, so the size is also capped by the content width to keep it on one line */
+/* "COMES TOGETHER." is about 12.8em wide in Monument, so the size is also capped by the content width to keep each
+   line on one line */
 .title {
   margin: 0;
   /* The cap keeps the longest line inside the content width; the vw step sets the size everywhere else */
-  font: 800 min(clamp(1.75rem, 5.2vw, 6.25rem), calc((100vw - 2 * clamp(16px, 4vw, 64px)) / 11)) / 0.95 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
+  font: 800 min(clamp(1.75rem, 5.2vw, 6.25rem), calc((100vw - 2 * clamp(16px, 4vw, 64px)) / 13.2)) / 0.95 'Monument Extended Ultrabold Local', 'Monument Extended Bold', var(--font-inter), sans-serif;
   text-transform: uppercase;
 }
 
 .line {
   display: block;
+  white-space: nowrap;
 }
 
 .accent {
@@ -258,9 +260,9 @@
 /* ---------- Responsive ---------- */
 @media (max-width: 640px) {
 
-  /* Fill the column: "PERFECTED." spans the full width on phones */
+  /* Fill the column: "COMES TOGETHER." spans the full width on phones */
   .title {
-    font-size: calc((100vw - 32px) / 11);
+    font-size: calc((100vw - 32px) / 13.2);
   }
 
   .shade {

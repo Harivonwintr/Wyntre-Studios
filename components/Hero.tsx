@@ -38,7 +38,9 @@ export default function Hero() {
       settled = true
       frame = requestAnimationFrame(() => {
         setIntroReady(true)
-        timer = setTimeout(() => videoRef.current?.load(), 1500)
+        // play() also starts the download; there's no autoPlay attribute, which would start it straight away and
+        // then get cut off and restarted when this ran
+        timer = setTimeout(() => videoRef.current?.play().catch(() => {}), 1500)
       })
     }
 
@@ -51,6 +53,19 @@ export default function Hero() {
       cancelAnimationFrame(frame)
       if (timer) clearTimeout(timer)
     }
+  }, [])
+
+  // Stop decoding the film while the hero is off screen; it picks up again on the way back
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) video.pause()
+      // Only resume a film that has started; before that the intro's timer starts it
+      else if (video.currentTime > 0 && video.paused) video.play().catch(() => {})
+    })
+    observer.observe(video)
+    return () => observer.disconnect()
   }, [])
 
   // Lock scroll and close on Escape while the reel is open
@@ -78,7 +93,6 @@ export default function Hero() {
       <video
         ref={videoRef}
         className={styles.media}
-        autoPlay
         loop
         muted
         playsInline
