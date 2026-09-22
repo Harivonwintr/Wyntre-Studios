@@ -16,6 +16,9 @@ type Props = {
 
 const FPS = 25
 const IDLE_MS = 2500
+// Scrub proxy: the rendition nearest this height, buffered in the background once the film is playing
+const PROXY_HEIGHT = 360
+const PROXY_DELAY_MS = 1200
 
 /** Seconds → HH:MM:SS:FF, matching the timecodes on the film strip */
 const toTimecode = (seconds: number) => {
@@ -47,6 +50,10 @@ const Icon = {
 export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const proxyRef = useRef<HTMLVideoElement>(null)
+  // Scrub state lives in a ref: the scrubber fires faster than React renders
+  const scrub = useRef({ active: false, shown: false, wasPlaying: false, proxyReady: false, proxySeeking: false, target: 0 })
+  const [scrubbing, setScrubbing] = useState(false)
   const idleTimer = useRef<ReturnType<typeof setTimeout>>()
 
   const [playing, setPlaying] = useState(false)
@@ -63,7 +70,12 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
     const video = videoRef.current
     if (!video) return
     const src = `https://videodelivery.net/${videoId}/manifest/video.m3u8`
+    const proxy = proxyRef.current
     let hls: Hls | null = null
+    let proxyHls: Hls | null = null
+    let proxyTimer = 0
+    scrub.current = { active: false, shown: false, wasPlaying: false, proxyReady: false, proxySeeking: false, target: 0 }
+    setScrubbing(false)
     let cancelled = false
     // Index of the top rendition once the manifest lands; used again after every seek
     let topLevel = -1
@@ -102,6 +114,11 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
           testBandwidth: false,
           // Hold loading until the start level is chosen below; with auto-start it begins on the lowest rung
           autoStartLoad: false,
+          // Load the whole film ahead and keep what has played, so jumping around afterwards stays local
+          maxBufferLength: 600,
+          maxMaxBufferLength: 600,
+          maxBufferSize: 200 * 1000 * 1000,
+          backBufferLength: Infinity,
         })
         // Levels are sorted by bitrate, so the last is the top rendition (1080p on Stream)
         hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
@@ -116,6 +133,38 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
         hls.on(Hls.Events.MANIFEST_PARSED, start)
         hls.loadSource(src)
         hls.attachMedia(video)
+
+        // QuickTime-style scrub proxy: a small rendition of the whole film, loaded quietly once playback has
+        // started so it never competes with the opening. While the scrubber is dragged the proxy shows the frames
+        // (local and light, so every position appears instantly); the full-quality picture takes over on release.
+        const loadProxy = () => {
+          if (cancelled || !proxy || proxyHls) return
+          proxyHls = new Hls({
+            autoStartLoad: false,
+            maxBufferLength: 600,
+            maxMaxBufferLength: 600,
+            backBufferLength: Infinity,
+          })
+          proxyHls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
+            if (!proxyHls) return
+            let pick = 0
+            data.levels.forEach((level, i) => {
+              if (Math.abs(level.height - PROXY_HEIGHT) < Math.abs(data.levels[pick].height - PROXY_HEIGHT)) pick = i
+            })
+            // A fixed rendition: left to itself, ABR would climb to full quality and defeat the point
+            proxyHls.loadLevel = pick
+            proxyHls.startLoad(0)
+          })
+          proxyHls.loadSource(src)
+          proxyHls.attachMedia(proxy)
+        }
+        video.addEventListener(
+          'playing',
+          () => {
+            proxyTimer = window.setTimeout(loadProxy, PROXY_DELAY_MS)
+          },
+          { once: true }
+        )
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = src
         video.addEventListener('loadedmetadata', start, { once: true })
@@ -135,8 +184,29 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
     }
     video.addEventListener('seeking', onSeeking)
 
+    // Proxy seeks are chained: a new position waits for the last one to land, so a fast drag never piles them up
+    const onProxyReady = () => {
+      scrub.current.proxyReady = true
+    }
+    const onProxySeeked = () => {
+      if (!proxy) return
+      const state = scrub.current
+      if (Math.abs(proxy.currentTime - state.target) > 0.5 / FPS) proxy.currentTime = state.target
+      else state.proxySeeking = false
+    }
+    proxy?.addEventListener('loadeddata', onProxyReady)
+    proxy?.addEventListener('seeked', onProxySeeked)
+
     return () => {
       cancelled = true
+      window.clearTimeout(proxyTimer)
+      proxy?.removeEventListener('loadeddata', onProxyReady)
+      proxy?.removeEventListener('seeked', onProxySeeked)
+      proxyHls?.destroy()
+      if (proxy) {
+        proxy.removeAttribute('src')
+        proxy.load()
+      }
       video.removeEventListener('loadedmetadata', start)
       video.removeEventListener('canplay', start)
       video.removeEventListener('seeking', onSeeking)
@@ -190,6 +260,73 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
     const video = videoRef.current
     if (video && Number.isFinite(video.duration)) video.currentTime = Math.min(video.duration, Math.max(0, seconds))
   }
+
+  // Scrubbing with the pointer: the film pauses and the proxy follows the scrubber; on release the full-quality
+  // picture jumps to the same frame, and the proxy steps aside once that frame is on screen
+  const beginScrub = () => {
+    const video = videoRef.current
+    const state = scrub.current
+    if (!video || state.active) return
+    state.active = true
+    state.wasPlaying = !video.paused
+    state.target = video.currentTime
+    video.pause()
+  }
+
+  const scrubTo = (seconds: number) => {
+    const video = videoRef.current
+    const proxy = proxyRef.current
+    const state = scrub.current
+    // Keyboard, or the proxy isn't loaded yet: seek the film itself
+    if (!state.active || !state.proxyReady || !proxy || !video) {
+      seekTo(seconds)
+      return
+    }
+    const target = Math.min(video.duration || seconds, Math.max(0, seconds))
+    state.target = target
+    setTime(target)
+    if (!state.shown) {
+      state.shown = true
+      setScrubbing(true)
+    }
+    if (!state.proxySeeking) {
+      state.proxySeeking = true
+      proxy.currentTime = target
+    }
+  }
+
+  // The pointer can be released anywhere, not just over the scrubber
+  useEffect(() => {
+    const endScrub = () => {
+      const video = videoRef.current
+      const state = scrub.current
+      if (!video || !state.active) return
+      state.active = false
+      const resume = () => {
+        if (state.wasPlaying) void video.play().catch(() => {})
+      }
+      if (!state.shown) {
+        resume()
+        return
+      }
+      state.shown = false
+      video.addEventListener(
+        'seeked',
+        () => {
+          setScrubbing(false)
+          resume()
+        },
+        { once: true }
+      )
+      video.currentTime = state.target
+    }
+    window.addEventListener('pointerup', endScrub)
+    window.addEventListener('pointercancel', endScrub)
+    return () => {
+      window.removeEventListener('pointerup', endScrub)
+      window.removeEventListener('pointercancel', endScrub)
+    }
+  }, [])
 
   const toggleFullscreen = () => {
     const wrap = wrapRef.current
@@ -246,6 +383,18 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
         onError={() => setError(true)}
       />
 
+      {/* Scrub proxy: shown only while the scrubber is dragged */}
+      <video
+        ref={proxyRef}
+        className={styles.proxy}
+        data-visible={scrubbing || undefined}
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+
       {error ? (
         <p className={styles.status}>Video unavailable</p>
       ) : !ready ? (
@@ -273,7 +422,8 @@ export default function CampaignPlayer({ videoId, title, startTime = 0 }: Props)
           max={duration || 0}
           step={1 / FPS}
           value={Math.min(time, duration || 0)}
-          onChange={(e) => seekTo(Number(e.target.value))}
+          onPointerDown={beginScrub}
+          onChange={(e) => scrubTo(Number(e.target.value))}
           style={{ '--progress': `${progress}%` } as CSSProperties}
           aria-label="Seek"
           aria-valuetext={`${toTimecode(time)} of ${toTimecode(duration)}`}

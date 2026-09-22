@@ -21,6 +21,21 @@
   cursor: pointer;
 }
 
+/* Scrub proxy: sits over the film, out of sight until a drag starts */
+.proxy {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.proxy[data-visible] {
+  visibility: visible;
+}
+
 /* Hide the pointer along with the controls while watching */
 .player[data-idle] .video {
   cursor: none;
