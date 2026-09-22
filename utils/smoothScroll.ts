@@ -24,3 +24,14 @@ export function syncSmoothScroll() {
   lenis.stop()
   lenis.start()
 }
+
+/** Glides back to the top of the page, through Lenis when it's running so the two never fight */
+export function scrollToTop() {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const lenis = instance
+  if (lenis && !lenis.isStopped) {
+    lenis.scrollTo(0, { immediate: reduce, duration: 1.4 })
+    return
+  }
+  window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
+}

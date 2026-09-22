@@ -44,6 +44,10 @@ const PIN_QUERY = '(min-width: 769px) and (prefers-reduced-motion: no-preference
 
 const ALL = 'All'
 
+// Pages whose strip has been scrolled all the way through this visit. Kept in memory rather than stored: after one
+// full pass the band stops pinning and becomes a strip you drag or swipe, and a reload brings the pin back
+const stripsSeen = new Set<string>()
+
 /** Sub-brands roll up to their parent so the brand filter stays short: NIVEA Men → NIVEA, NESCAFÉ Gold → NESCAFÉ */
 const brandOf = (client: string) => {
   if (/^nivea/i.test(client)) return 'NIVEA'
@@ -208,8 +212,12 @@ export default function CampaignRange({
       viewport.style.setProperty('--strip-x', `${x}px`)
     }
 
+    const stripKey = `${window.location.pathname}#${id ?? 'strip'}`
+    let disposed = false
+
     const mm = gsap.matchMedia()
     mm.add(PIN_QUERY, () => {
+      if (stripsSeen.has(stripKey)) return
       section.setAttribute('data-pinned', '')
       setActive(0)
       distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth)
@@ -228,6 +236,9 @@ export default function CampaignRange({
           scrub: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          // Scrolled right through: the pin goes for the rest of the visit. Outside this callback, since it kills
+          // the trigger
+          onLeave: () => window.setTimeout(release, 0),
           onUpdate: (self) => {
             setActive(Math.round(self.progress * (frames.length - 1)))
             if (fillRef.current) fillRef.current.style.transform = `scaleX(${self.progress})`
@@ -238,6 +249,28 @@ export default function CampaignRange({
       })
       trigger = tween.scrollTrigger ?? null
       ScrollTrigger.refresh()
+
+      // Hands the strip over to its drag and swipe mode, still showing the last frame, and takes the pin's scroll
+      // length out of the page in the same frame so nothing on screen moves
+      const release = () => {
+        if (disposed || stripsSeen.has(stripKey)) return
+        stripsSeen.add(stripKey)
+        const before = section.getBoundingClientRect().top
+        const end = distance()
+        tween.scrollTrigger?.kill()
+        tween.kill()
+        trigger = null
+        gsap.set(track, { clearProps: 'transform' })
+        section.removeAttribute('data-pinned')
+        viewport.style.removeProperty('--strip-x')
+        frames[active]?.removeAttribute('data-active')
+        active = -1
+        viewport.scrollLeft = end
+        const shift = Math.round(section.getBoundingClientRect().top - before)
+        if (shift) window.scrollTo({ top: window.scrollY + shift, behavior: 'instant' })
+        syncSmoothScroll()
+        ScrollTrigger.refresh()
+      }
 
       return () => {
         trigger = null
@@ -339,9 +372,10 @@ export default function CampaignRange({
       window.removeEventListener('pointercancel', onPointerUp)
       viewport.removeEventListener('click', onClickCapture, true)
       viewport.removeEventListener('dragstart', preventNativeDrag)
+      disposed = true
       mm.revert()
     }
-  }, [items.length, layout])
+  }, [items.length, layout, id])
 
   return (
     <section

@@ -13,7 +13,8 @@ const pad = (n: number) => String(n).padStart(2, '0')
 const WAVE = Array.from({ length: 64 }, (_, i) => {
   const envelope = 0.35 + 0.65 * Math.abs(Math.sin(i * 0.19))
   const jitter = 0.55 + 0.45 * Math.abs(Math.sin(i * 2.7) * Math.cos(i * 1.3))
-  return Math.max(0.08, envelope * jitter)
+  // Rounded, since server and browser can disagree on the last digit of a float
+  return Math.round(Math.max(0.08, envelope * jitter) * 1000) / 1000
 })
 
 function Waveform({ className }: { className?: string }) {

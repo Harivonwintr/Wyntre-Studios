@@ -433,6 +433,11 @@
   scrollbar-width: none;
 }
 
+/* Snapping would fight a mouse drag frame by frame; it settles on a frame once the drag lets go */
+.section[data-dragging]:not([data-pinned]) .viewport {
+  scroll-snap-type: none;
+}
+
 .section:not([data-pinned]) .viewport::-webkit-scrollbar {
   display: none;
 }

@@ -13,7 +13,7 @@ import modalStyles from './CaseStudyModal.module.css'
 import styles from './campaign/CampaignShowcase.module.css'
 
 // Cloudflare Stream upload of the current studio reel
-const REEL_VIDEO_ID = '6accbd8b3bde65e46d77ca0e7043fc8c'
+const REEL_VIDEO_ID = '3808f7c54c00a942317bb2ecaa7badcf'
 
 const REEL = {
   year: '2026',

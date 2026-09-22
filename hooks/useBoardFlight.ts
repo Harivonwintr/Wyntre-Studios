@@ -3,6 +3,7 @@
 import { useEffect, type RefObject } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { syncSmoothScroll } from '@/utils/smoothScroll'
 
 // How far back the camera starts, in board-distances: 1 is the resting view, 1 + TRAVEL is the start
 const TRAVEL = 2.5
@@ -31,6 +32,10 @@ type Flyer = {
   spin: number
 }
 
+// Set once the camera has landed. Kept in memory rather than stored, so the flight plays once per visit: scrolling
+// back past the board, or returning to the home page, never pins the page again, and a reload starts afresh
+let flightSeen = false
+
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 
 // Cheap deterministic jitter so every visit flies the same way
@@ -51,7 +56,7 @@ const jitter = (i: number) => {
 export function useBoardFlight(sectionRef: RefObject<HTMLElement>, enabled: boolean) {
   useEffect(() => {
     const section = sectionRef.current
-    if (!enabled || !section) return
+    if (!enabled || !section || flightSeen) return
 
     gsap.registerPlugin(ScrollTrigger)
     const mm = gsap.matchMedia()
@@ -70,6 +75,9 @@ export function useBoardFlight(sectionRef: RefObject<HTMLElement>, enabled: bool
     window.addEventListener('scroll', start, { passive: true })
 
     const setup = () => mm.add(FLIGHT_QUERY, () => {
+      // Already flown this visit (the flight can re-run when the window is resized across the breakpoint)
+      if (flightSeen) return
+
       const flyers: Flyer[] = []
       section.querySelectorAll<HTMLElement>('[data-fly-piece], [data-fly-pass]').forEach((el, i) => {
         const note = el.dataset.flyPass !== undefined
@@ -90,6 +98,8 @@ export function useBoardFlight(sectionRef: RefObject<HTMLElement>, enabled: bool
       })
 
       let live = false
+      let releasing = false
+      let disposed = false
       // Share of the scroll spent on the lead-in, while the section rises in dark and empty: nothing flies until it
       // fills the screen, so the previous section has cleared off and no piece is cut off at the section's top edge
       let lead = 0.4
@@ -128,6 +138,11 @@ export function useBoardFlight(sectionRef: RefObject<HTMLElement>, enabled: bool
             clear()
             section.setAttribute('data-flight', 'landed')
             live = false
+          }
+          // Once landed, the pin goes for the rest of the visit. Outside this callback, since it kills the triggers
+          if (!flightSeen && !releasing) {
+            releasing = true
+            window.setTimeout(release, 0)
           }
           return
         }
@@ -208,6 +223,22 @@ export function useBoardFlight(sectionRef: RefObject<HTMLElement>, enabled: bool
         },
         onUpdate: (self) => render(self.progress),
       })
+      // Takes the pin out and puts the board back in the page's normal flow. The pin's scroll length disappears with
+      // it, so the page shifts by the same amount in the same frame and the visitor sees nothing move
+      const release = () => {
+        if (disposed) return
+        flightSeen = true
+        const before = section.getBoundingClientRect().top
+        trigger.kill()
+        pin.kill()
+        clear()
+        section.removeAttribute('data-flight')
+        const shift = Math.round(section.getBoundingClientRect().top - before)
+        if (shift) window.scrollTo({ top: window.scrollY + shift, behavior: 'instant' as ScrollBehavior })
+        syncSmoothScroll()
+        ScrollTrigger.refresh()
+      }
+
       // These triggers are created after the ones further down the page (the Campaign Range pin), so re-order them by
       // position and re-measure everything: the pin's added scroll length pushes every later trigger down
       ScrollTrigger.sort()
@@ -215,6 +246,7 @@ export function useBoardFlight(sectionRef: RefObject<HTMLElement>, enabled: bool
       render(trigger.progress)
 
       return () => {
+        disposed = true
         trigger.kill()
         pin.kill()
         clear()

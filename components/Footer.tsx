@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import BackToTop from './BackToTop'
 import styles from './Footer.module.css'
 
 // Fill in real URLs to show these links; entries without one are hidden rather than rendered as dead "#" links
@@ -58,6 +59,11 @@ export default function Footer() {
               <br />
               United States
             </address>
+            <address className={styles.address}>
+              Cape Town
+              <br />
+              South Africa
+            </address>
           </div>
 
           <div>
@@ -99,10 +105,8 @@ export default function Footer() {
 
         <div className={styles.meta}>
           <span>© {currentYear} Wyntre Studios LLC. All rights reserved.</span>
-          <span>San Francisco, CA</span>
-          <a href="#top" className={styles.backToTop}>
-            Back to top ↑
-          </a>
+          <span>San Francisco · Cape Town</span>
+          <BackToTop />
         </div>
       </div>
     </footer>

@@ -102,6 +102,17 @@ export default function ContactSection({ id, index = '[05]' }: Props) {
                 </div>
               </li>
               <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+                </svg>
+                <div>
+                  <strong className={styles.city}>Cape Town</strong>
+                  <address className={styles.address}>
+                    Western Cape, South Africa
+                  </address>
+                </div>
+              </li>
+              <li>
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="5" width="18" height="14" rx="1.5" />
                   <path d="M3.5 6l8.5 7 8.5-7" />
