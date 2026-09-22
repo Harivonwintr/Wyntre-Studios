@@ -214,13 +214,33 @@ export default function CampaignRange({
 
     const stripKey = `${window.location.pathname}#${id ?? 'strip'}`
     let disposed = false
+    // Pin released (or already seen this visit): the strip keeps its pinned look and is moved by dragging or a
+    // sideways scroll instead of the page scroll
+    let released = false
 
     const mm = gsap.matchMedia()
     mm.add(PIN_QUERY, () => {
-      if (stripsSeen.has(stripKey)) return
       section.setAttribute('data-pinned', '')
       setActive(0)
       distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth)
+
+      const cleanup = () => {
+        trigger = null
+        released = false
+        distance = () => 0
+        section.removeAttribute('data-pinned')
+        gsap.set(track, { clearProps: 'transform' })
+        viewport.style.removeProperty('--strip-x')
+        if (fillRef.current) fillRef.current.style.removeProperty('transform')
+        frames[active]?.removeAttribute('data-active')
+        active = -1
+      }
+
+      if (stripsSeen.has(stripKey)) {
+        released = true
+        syncToX(0)
+        return cleanup
+      }
 
       const tween = gsap.to(track, {
         x: () => -distance(),
@@ -250,40 +270,31 @@ export default function CampaignRange({
       trigger = tween.scrollTrigger ?? null
       ScrollTrigger.refresh()
 
-      // Hands the strip over to its drag and swipe mode, still showing the last frame, and takes the pin's scroll
-      // length out of the page in the same frame so nothing on screen moves
+      // Only the scroll lock goes: the strip stays exactly as it looks on its last frame, and the pin's scroll length
+      // leaves the page in the same frame so nothing on screen moves
       const release = () => {
-        if (disposed || stripsSeen.has(stripKey)) return
+        if (disposed || released) return
         stripsSeen.add(stripKey)
+        released = true
         const before = section.getBoundingClientRect().top
-        const end = distance()
+        const x = -distance()
         tween.scrollTrigger?.kill()
         tween.kill()
         trigger = null
-        gsap.set(track, { clearProps: 'transform' })
-        section.removeAttribute('data-pinned')
-        viewport.style.removeProperty('--strip-x')
-        frames[active]?.removeAttribute('data-active')
-        active = -1
-        viewport.scrollLeft = end
+        gsap.set(track, { x })
+        syncToX(x)
         const shift = Math.round(section.getBoundingClientRect().top - before)
         if (shift) window.scrollTo({ top: window.scrollY + shift, behavior: 'instant' })
         syncSmoothScroll()
         ScrollTrigger.refresh()
       }
 
-      return () => {
-        trigger = null
-        distance = () => 0
-        section.removeAttribute('data-pinned')
-        viewport.style.removeProperty('--strip-x')
-        frames[active]?.removeAttribute('data-active')
-        active = -1
-      }
+      return cleanup
     })
 
     // 'scroll': pinned and in range, so dragging moves the page scroll that drives the strip.
-    // 'strip': above or below the pin, so dragging slides the strip itself and the page stays put.
+    // 'strip': above or below the pin, or once it's released, so dragging slides the strip itself and the page
+    // stays put.
     // 'native': not pinned at all (swipe fallback), so dragging scrolls the strip's own overflow.
     type DragMode = 'scroll' | 'strip' | 'native'
     const drag = { down: false, moved: false, mode: 'native' as DragMode, startX: 0, startScroll: 0, startLeft: 0, startTrackX: 0 }
@@ -296,7 +307,8 @@ export default function CampaignRange({
       drag.startScroll = window.scrollY
       drag.startLeft = viewport.scrollLeft
       drag.startTrackX = Number(gsap.getProperty(track, 'x')) || 0
-      if (!trigger) drag.mode = 'native'
+      if (released) drag.mode = 'strip'
+      else if (!trigger) drag.mode = 'native'
       else drag.mode = window.scrollY >= trigger.start - 2 && window.scrollY <= trigger.end + 2 ? 'scroll' : 'strip'
     }
 
@@ -335,17 +347,36 @@ export default function CampaignRange({
         const snapped = Math.round(progress * (frames.length - 1)) / (frames.length - 1)
         window.scrollTo({ top: trigger.start + snapped * range, behavior: 'smooth' })
       } else if (drag.mode === 'strip') {
-        const range = distance()
-        const current = Number(gsap.getProperty(track, 'x')) || 0
-        const step = range / (frames.length - 1)
-        const target = Math.min(0, Math.max(-range, Math.round(current / step) * step))
-        gsap.to(track, {
-          x: target,
-          duration: 0.5,
-          ease: 'power3.out',
-          onUpdate: () => syncToX(Number(gsap.getProperty(track, 'x')) || 0),
-        })
+        settleStrip()
       }
+    }
+
+    // Eases the strip onto the nearest frame
+    function settleStrip() {
+      const range = distance()
+      const current = Number(gsap.getProperty(track, 'x')) || 0
+      const step = range / (frames.length - 1)
+      const target = Math.min(0, Math.max(-range, Math.round(current / step) * step))
+      gsap.to(track, {
+        x: target,
+        duration: 0.5,
+        ease: 'power3.out',
+        overwrite: true,
+        onUpdate: () => syncToX(Number(gsap.getProperty(track, 'x')) || 0),
+      })
+    }
+
+    // Once released, a sideways trackpad swipe slides the strip; up-and-down scrolling still moves the page
+    let wheelIdle = 0
+    const onWheel = (e: WheelEvent) => {
+      if (!released || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+      e.preventDefault()
+      gsap.killTweensOf(track)
+      const x = Math.min(0, Math.max(-distance(), (Number(gsap.getProperty(track, 'x')) || 0) - e.deltaX))
+      gsap.set(track, { x })
+      syncToX(x)
+      window.clearTimeout(wheelIdle)
+      wheelIdle = window.setTimeout(settleStrip, 160)
     }
 
     // A drag shouldn't also open the campaign it ended on
@@ -364,6 +395,7 @@ export default function CampaignRange({
     window.addEventListener('pointercancel', onPointerUp)
     viewport.addEventListener('click', onClickCapture, true)
     viewport.addEventListener('dragstart', preventNativeDrag)
+    viewport.addEventListener('wheel', onWheel, { passive: false })
 
     return () => {
       viewport.removeEventListener('pointerdown', onPointerDown)
@@ -372,6 +404,8 @@ export default function CampaignRange({
       window.removeEventListener('pointercancel', onPointerUp)
       viewport.removeEventListener('click', onClickCapture, true)
       viewport.removeEventListener('dragstart', preventNativeDrag)
+      viewport.removeEventListener('wheel', onWheel)
+      window.clearTimeout(wheelIdle)
       disposed = true
       mm.revert()
     }
